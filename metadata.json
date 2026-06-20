@@ -1,0 +1,6 @@
+{
+  "name": "PIMXMORPH",
+  "description": "A 100% client-side file conversion suite. All processing happens locally in your browser using JavaScript and Web Workers, keeping your files completely secure and private.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
