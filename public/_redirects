@@ -1,0 +1,4 @@
+# Cloudflare Pages SPA fallback — single page app routing
+# All unknown routes resolve to the index, letting React handle the view.
+
+/*    /index.html   200

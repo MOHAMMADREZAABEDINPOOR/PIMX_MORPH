@@ -8,6 +8,7 @@ import LanguageDropdown from './components/LanguageDropdown';
 import { Language, LANG_NAMES, TRANSLATIONS, CONVERTER_LOCALIZATION } from './utils/translations';
 import AdminPanel from './components/AdminPanel';
 import { recordActiveVisit, getOrCreateHistoricalLogs } from './utils/tracker';
+import { updateSeo } from './utils/seo';
 
 const CONVERTERS: ConverterInfo[] = [
   {
@@ -205,44 +206,15 @@ export default function App() {
   const t = (key: string) => TRANSLATIONS[lang]?.[key] || TRANSLATIONS['en']?.[key] || key;
   const isRtl = lang === 'fa' || lang === 'ar';
 
-  // Dynamic SEO Metadata Injection Hook
+  // Dynamic SEO Metadata Injection Hook — delegates to utils/seo.ts
   useEffect(() => {
-    if (activeConverter) {
-      const pageTitle = activeConverter.seoTitle 
-        ? `${activeConverter.seoTitle} | PIMXMORPH` 
-        : `${activeConverter.title} - Free Client-Side Multi-Format File Converter | PIMXMORPH`;
-      document.title = pageTitle;
-
-      // Update Meta Description
-      let metaDesc = document.querySelector('meta[name="description"]');
-      if (!metaDesc) {
-        metaDesc = document.createElement('meta');
-        metaDesc.setAttribute('name', 'description');
-        document.head.appendChild(metaDesc);
-      }
-      metaDesc.setAttribute('content', activeConverter.seoDescription || activeConverter.description);
-
-      // Update OpenGraph Title
-      let ogTitle = document.querySelector('meta[property="og:title"]');
-      if (!ogTitle) {
-        ogTitle = document.createElement('meta');
-        ogTitle.setAttribute('property', 'og:title');
-        document.head.appendChild(ogTitle);
-      }
-      ogTitle.setAttribute('content', pageTitle);
-
-      // Update OpenGraph Description
-      let ogDesc = document.querySelector('meta[property="og:description"]');
-      if (!ogDesc) {
-        ogDesc = document.createElement('meta');
-        ogDesc.setAttribute('property', 'og:description');
-        document.head.appendChild(ogDesc);
-      }
-      ogDesc.setAttribute('content', activeConverter.seoDescription || activeConverter.description);
-      
-      // Update HTML lang attribute
-      document.documentElement.lang = lang;
-    }
+    if (!activeConverter) return;
+    updateSeo({
+      title: activeConverter.seoTitle || activeConverter.title,
+      description: activeConverter.seoDescription || activeConverter.description,
+      toolId: activeConverter.id,
+      lang,
+    });
   }, [activeConverter, lang]);
 
   if (isAdminView) {
