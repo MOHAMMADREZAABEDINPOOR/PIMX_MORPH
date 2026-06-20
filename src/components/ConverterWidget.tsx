@@ -4,6 +4,7 @@ import { ConversionType, ConverterInfo, ConversionJob } from '../types';
 import { convertImage, convertHEIC, mergePDFs, splitPDF, compressPDF, convertPdfToImages, convertPdfToWord, convertImagesToPDF, convertTxtToPdf, convertPdfToTxt, convertJsonToCsv, convertCsvToJson, convertDocxToTxt, convertAudioVideo } from '../utils/converter';
 import { Language, TRANSLATIONS } from '../utils/translations';
 import CustomSelect, { SelectOption } from './CustomSelect';
+import { recordActiveVisit } from '../utils/tracker';
 
 interface ConverterWidgetProps {
   currentConverter: ConverterInfo;
@@ -339,6 +340,9 @@ export default function ConverterWidget({
       setStatus('completed');
       setProgress(100);
       onProcessedCountChange(processedCount + 1);
+      
+      // Track actual test action locally conforming to tracking framework
+      recordActiveVisit(subConversionMode).catch(e => console.error(e));
     } catch (err: any) {
       console.error(err);
       setStatus('failed');

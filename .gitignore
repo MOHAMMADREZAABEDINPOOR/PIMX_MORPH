@@ -1,22 +1,9 @@
-# Dependencies
 node_modules/
-
-# Build output
 build/
 dist/
-
-# Misc
 coverage/
 .DS_Store
 *.log
-*.local
-*.zip
-
-# Environment variables
 .env*
 !.env.example
-
-# Editor / IDE
-.vscode/
-.idea/
-*.swp
+*.zip

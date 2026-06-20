@@ -6,6 +6,8 @@ import ConverterWidget from './components/ConverterWidget';
 import GuideSection from './components/GuideSection';
 import LanguageDropdown from './components/LanguageDropdown';
 import { Language, LANG_NAMES, TRANSLATIONS, CONVERTER_LOCALIZATION } from './utils/translations';
+import AdminPanel from './components/AdminPanel';
+import { recordActiveVisit, getOrCreateHistoricalLogs } from './utils/tracker';
 
 const CONVERTERS: ConverterInfo[] = [
   {
@@ -116,9 +118,23 @@ export default function App() {
   const [processedCount, setProcessedCount] = useState<number>(0);
   const [darkMode, setDarkMode] = useState<boolean>(true);
   const [lang, setLang] = useState<Language>('en');
+  const [isAdminView, setIsAdminView] = useState<boolean>(false);
 
   // Initialize theme mode & conversions counts from localStorage safely
   useEffect(() => {
+    // Determine path routing to show Admin Panel
+    if (window.location.pathname === '/pimxmorphadmin') {
+      setIsAdminView(true);
+    } else {
+      setIsAdminView(false);
+    }
+
+    // Capture the visitor metrics (device, browser, exact date & dynamic location lookup)
+    getOrCreateHistoricalLogs(); // Seed initially to keep full dashboard functional
+    if (window.location.pathname !== '/pimxmorphadmin') {
+      recordActiveVisit().catch(e => console.error('Tracker registration error:', e));
+    }
+
     const savedTheme = localStorage.getItem('offline_converter_theme');
     if (savedTheme === 'light') {
       setDarkMode(false);
@@ -229,6 +245,10 @@ export default function App() {
     }
   }, [activeConverter, lang]);
 
+  if (isAdminView) {
+    return <AdminPanel />;
+  }
+
   return (
     <div dir={isRtl ? 'rtl' : 'ltr'} className={darkMode ? 'dark min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans' : 'min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans'}>
       {/* Navigation Header */}
@@ -240,7 +260,7 @@ export default function App() {
             </span>
           </div>
  
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 font-display">
             {/* Elegant Language Selector dropdown */}
             <LanguageDropdown
               currentLang={lang}
@@ -285,7 +305,7 @@ export default function App() {
       </main>
 
       {/* Footer Credentials */}
-      <footer className="mt-20 py-8 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-900 text-center text-xs text-slate-500">
+      <footer className="mt-20 py-8 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-900 text-center text-xs text-slate-500 font-sans">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="font-semibold text-slate-400">
             {lang === 'fa' ? '© ۲۰۲۶ PIMXMORPH حریم خصوصی کاملاً حفظ می‌شود و پردازش در مرورگر شما صورت می‌گیرد.' : '© 2026 PIMXMORPH Client Sandbox. Keep your data private.'}
