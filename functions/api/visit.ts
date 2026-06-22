@@ -1,26 +1,24 @@
-// Cloudflare Pages Function — Visit tracking API backed by D1
-// Binding name: PIMX_VISITS  (set in Pages → Settings → Functions → D1 bindings)
+/// <reference types="@cloudflare/workers-types" />
+// Cloudflare Pages Function — Visit tracking API backed by KV
+// Binding name: PIMX_VISITS  (set in Pages → Settings → Functions → KV bindings)
 
 interface Env {
-  PIMX_VISITS: D1Database;
+  PIMX_VISITS: KVNamespace;
 }
 
-// Ensure the visits table exists (idempotent — safe to call every request)
-async function ensureTable(db: D1Database) {
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS visits (
-      id         TEXT PRIMARY KEY,
-      timestamp  TEXT NOT NULL,
-      ip         TEXT,
-      city       TEXT,
-      country    TEXT,
-      browser    TEXT,
-      os         TEXT,
-      device_type TEXT NOT NULL,
-      action_performed TEXT
-    );
-  `);
+interface VisitRecord {
+  id: string;
+  timestamp: string;
+  ip: string;
+  city: string;
+  country: string;
+  browser: string;
+  os: string;
+  deviceType: string;
+  actionPerformed: string | null;
 }
+
+const KV_KEY = 'all_visits';
 
 const JSON_HEADERS = {
   'Content-Type': 'application/json',
@@ -29,6 +27,17 @@ const JSON_HEADERS = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
 
+async function getAllVisits(kv: KVNamespace): Promise<VisitRecord[]> {
+  const raw = await kv.get(KV_KEY, 'json');
+  return Array.isArray(raw) ? raw : [];
+}
+
+async function putAllVisits(kv: KVNamespace, visits: VisitRecord[]): Promise<void> {
+  // Keep max 10000 visits to stay well under KV 25MB value limit
+  const trimmed = visits.length > 10000 ? visits.slice(-10000) : visits;
+  await kv.put(KV_KEY, JSON.stringify(trimmed));
+}
+
 // ── CORS preflight ──────────────────────────────────────────────
 export const onRequestOptions: PagesFunction<Env> = async () => {
   return new Response(null, { status: 204, headers: JSON_HEADERS });
@@ -36,8 +45,7 @@ export const onRequestOptions: PagesFunction<Env> = async () => {
 
 // ── POST  /api/visit  — record a new visit ─────────────────────
 export const onRequestPost: PagesFunction<Env> = async (context) => {
-  const db = context.env.PIMX_VISITS;
-  await ensureTable(db);
+  const kv = context.env.PIMX_VISITS;
 
   const body = await context.request.json() as {
     browser: string;
@@ -49,66 +57,44 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   // Real IP from Cloudflare edge
   const ip = context.request.headers.get('CF-Connecting-IP') || 'unknown';
 
-  // Real geo from Cloudflare cf object (city / country come from IP at the edge)
+  // Real geo from Cloudflare cf object (city / country resolved from IP at the edge)
   const cf = context.request.cf as Record<string, string> | undefined;
   const city = cf?.city || 'Unknown';
   const country = cf?.country || 'Unknown';
 
-  const id = crypto.randomUUID();
-  const timestamp = new Date().toISOString();
+  const newVisit: VisitRecord = {
+    id: crypto.randomUUID(),
+    timestamp: new Date().toISOString(),
+    ip,
+    city,
+    country,
+    browser: body.browser,
+    os: body.os,
+    deviceType: body.deviceType,
+    actionPerformed: body.actionPerformed ?? null,
+  };
 
-  await db
-    .prepare(
-      `INSERT INTO visits (id, timestamp, ip, city, country, browser, os, device_type, action_performed)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    )
-    .bind(id, timestamp, ip, city, country, body.browser, body.os, body.deviceType, body.actionPerformed ?? null)
-    .run();
+  const visits = await getAllVisits(kv);
+  visits.push(newVisit);
+  await putAllVisits(kv, visits);
 
-  return new Response(JSON.stringify({ success: true, id }), { headers: JSON_HEADERS });
+  return new Response(JSON.stringify({ success: true, id: newVisit.id }), {
+    headers: JSON_HEADERS,
+  });
 };
 
 // ── GET  /api/visit  — fetch all visits (admin) ────────────────
 export const onRequestGet: PagesFunction<Env> = async (context) => {
-  const db = context.env.PIMX_VISITS;
-  await ensureTable(db);
+  const kv = context.env.PIMX_VISITS;
+  const visits = await getAllVisits(kv);
 
-  const url = new URL(context.request.url);
-  const since = url.searchParams.get('since'); // ISO timestamp for filtering
-
-  let query: string;
-  let params: unknown[];
-
-  if (since) {
-    query = 'SELECT * FROM visits WHERE timestamp >= ? ORDER BY timestamp DESC';
-    params = [since];
-  } else {
-    query = 'SELECT * FROM visits ORDER BY timestamp DESC LIMIT 5000';
-    params = [];
-  }
-
-  const { results } = await db.prepare(query).bind(...params).all();
-
-  // Map snake_case DB columns → camelCase frontend format
-  const logs = (results as Record<string, unknown>[]).map((row) => ({
-    id: row.id,
-    timestamp: row.timestamp,
-    ip: row.ip,
-    city: row.city,
-    country: row.country,
-    browser: row.browser,
-    os: row.os,
-    deviceType: row.device_type,
-    actionPerformed: row.action_performed,
-  }));
-
-  return new Response(JSON.stringify(logs), { headers: JSON_HEADERS });
+  return new Response(JSON.stringify(visits), { headers: JSON_HEADERS });
 };
 
 // ── DELETE  /api/visit  — clear all visits (admin) ─────────────
 export const onRequestDelete: PagesFunction<Env> = async (context) => {
-  const db = context.env.PIMX_VISITS;
-  await db.prepare('DELETE FROM visits').run();
+  const kv = context.env.PIMX_VISITS;
+  await kv.put(KV_KEY, JSON.stringify([]));
 
   return new Response(JSON.stringify({ success: true }), { headers: JSON_HEADERS });
 };
