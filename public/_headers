@@ -1,6 +1,12 @@
 # PIMXMORPH — Cloudflare Pages security & SEO headers
 # Reference: https://developers.cloudflare.com/pages/configuration/headers/
 
+# API routes — allow CORS for visit tracking
+/api/*
+  Access-Control-Allow-Origin: *
+  Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS
+  Access-Control-Allow-Headers: Content-Type, Authorization
+
 /*
   # --- Security headers ---
   X-Frame-Options: SAMEORIGIN

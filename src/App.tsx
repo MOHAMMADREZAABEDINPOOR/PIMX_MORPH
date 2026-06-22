@@ -7,8 +7,9 @@ import GuideSection from './components/GuideSection';
 import LanguageDropdown from './components/LanguageDropdown';
 import { Language, LANG_NAMES, TRANSLATIONS, CONVERTER_LOCALIZATION } from './utils/translations';
 import AdminPanel from './components/AdminPanel';
-import { recordActiveVisit, getOrCreateHistoricalLogs } from './utils/tracker';
-import { updateSeo } from './utils/seo';
+import { recordActiveVisit } from './utils/tracker';
+import SplashLoader from './components/SplashLoader';
+import { AnimatePresence } from 'motion/react';
 
 const CONVERTERS: ConverterInfo[] = [
   {
@@ -120,6 +121,7 @@ export default function App() {
   const [darkMode, setDarkMode] = useState<boolean>(true);
   const [lang, setLang] = useState<Language>('en');
   const [isAdminView, setIsAdminView] = useState<boolean>(false);
+  const [showSplash, setShowSplash] = useState<boolean>(true);
 
   // Initialize theme mode & conversions counts from localStorage safely
   useEffect(() => {
@@ -131,7 +133,6 @@ export default function App() {
     }
 
     // Capture the visitor metrics (device, browser, exact date & dynamic location lookup)
-    getOrCreateHistoricalLogs(); // Seed initially to keep full dashboard functional
     if (window.location.pathname !== '/pimxmorphadmin') {
       recordActiveVisit().catch(e => console.error('Tracker registration error:', e));
     }
@@ -206,15 +207,44 @@ export default function App() {
   const t = (key: string) => TRANSLATIONS[lang]?.[key] || TRANSLATIONS['en']?.[key] || key;
   const isRtl = lang === 'fa' || lang === 'ar';
 
-  // Dynamic SEO Metadata Injection Hook — delegates to utils/seo.ts
+  // Dynamic SEO Metadata Injection Hook
   useEffect(() => {
-    if (!activeConverter) return;
-    updateSeo({
-      title: activeConverter.seoTitle || activeConverter.title,
-      description: activeConverter.seoDescription || activeConverter.description,
-      toolId: activeConverter.id,
-      lang,
-    });
+    if (activeConverter) {
+      const pageTitle = activeConverter.seoTitle 
+        ? `${activeConverter.seoTitle} | PIMXMORPH` 
+        : `${activeConverter.title} - Free Client-Side Multi-Format File Converter | PIMXMORPH`;
+      document.title = pageTitle;
+
+      // Update Meta Description
+      let metaDesc = document.querySelector('meta[name="description"]');
+      if (!metaDesc) {
+        metaDesc = document.createElement('meta');
+        metaDesc.setAttribute('name', 'description');
+        document.head.appendChild(metaDesc);
+      }
+      metaDesc.setAttribute('content', activeConverter.seoDescription || activeConverter.description);
+
+      // Update OpenGraph Title
+      let ogTitle = document.querySelector('meta[property="og:title"]');
+      if (!ogTitle) {
+        ogTitle = document.createElement('meta');
+        ogTitle.setAttribute('property', 'og:title');
+        document.head.appendChild(ogTitle);
+      }
+      ogTitle.setAttribute('content', pageTitle);
+
+      // Update OpenGraph Description
+      let ogDesc = document.querySelector('meta[property="og:description"]');
+      if (!ogDesc) {
+        ogDesc = document.createElement('meta');
+        ogDesc.setAttribute('property', 'og:description');
+        document.head.appendChild(ogDesc);
+      }
+      ogDesc.setAttribute('content', activeConverter.seoDescription || activeConverter.description);
+      
+      // Update HTML lang attribute
+      document.documentElement.lang = lang;
+    }
   }, [activeConverter, lang]);
 
   if (isAdminView) {
@@ -222,7 +252,19 @@ export default function App() {
   }
 
   return (
-    <div dir={isRtl ? 'rtl' : 'ltr'} className={darkMode ? 'dark min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans' : 'min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans'}>
+    <>
+      <AnimatePresence mode="wait">
+        {showSplash && (
+          <SplashLoader
+            onComplete={() => setShowSplash(false)}
+            lang={lang}
+            darkMode={darkMode}
+            onToggleTheme={handleToggleTheme}
+          />
+        )}
+      </AnimatePresence>
+
+      <div dir={isRtl ? 'rtl' : 'ltr'} className={darkMode ? 'dark min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans' : 'min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans'}>
       {/* Navigation Header */}
       <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 py-3.5 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -290,5 +332,6 @@ export default function App() {
         </div>
       </footer>
     </div>
+    </>
   );
 }

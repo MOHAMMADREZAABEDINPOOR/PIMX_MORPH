@@ -1,4 +1,6 @@
 # Cloudflare Pages SPA fallback — single page app routing
 # All unknown routes resolve to the index, letting React handle the view.
+# /api/* routes are handled by Pages Functions and must NOT be caught by this rule.
 
+/api/*  /api/:splat  200
 /*    /index.html   200

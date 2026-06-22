@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ArrowUpRight, LogOut, Check, ChevronDown, RefreshCw, BarChart2, ShieldCheck, Activity, Users, Settings, Trash2 } from 'lucide-react';
-import { VisitLog, getOrCreateHistoricalLogs, recordActiveVisit } from '../utils/tracker';
+import { VisitLog, fetchVisitLogs, clearVisitLogs } from '../utils/tracker';
 import { motion, AnimatePresence } from 'motion/react';
 
 // Specific timeline filters requested by the user
@@ -68,16 +68,16 @@ export default function AdminPanel() {
     localStorage.removeItem('pimxmorph_admin_session');
   };
 
-  const loadData = () => {
+  const loadData = async () => {
     setIsRefreshing(true);
-    const data = getOrCreateHistoricalLogs();
+    const data = await fetchVisitLogs();
     setLogs(data);
     setTimeout(() => setIsRefreshing(false), 600);
   };
 
-  const handleClearData = () => {
+  const handleClearData = async () => {
     if (window.confirm('آیا مطمئن هستید که می‌خواهید تمام اطلاعات و آمار بازدید را پاک کنید؟ آمار صفر خواهد شد.')) {
-      localStorage.setItem('pimxmorph_visit_logs', JSON.stringify([]));
+      await clearVisitLogs();
       setLogs([]);
     }
   };
@@ -322,7 +322,7 @@ export default function AdminPanel() {
             <div>
               <span className="text-white font-extrabold text-sm tracking-widest block uppercase">PIMXMORPH MONITOR</span>
               <span className="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span> اتصال ایمن و زنده (آفلاین)
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span> اتصال ایمن و زنده (D1 Database)
               </span>
             </div>
           </div>

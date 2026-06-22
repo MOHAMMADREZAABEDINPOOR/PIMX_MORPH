@@ -7,7 +7,7 @@ export interface VisitLog {
   browser: string;
   os: string;
   deviceType: 'Desktop' | 'Mobile' | 'Tablet';
-  actionPerformed?: string; // is a "Test" action
+  actionPerformed?: string;
 }
 
 // Detect client specifications natively
@@ -48,41 +48,52 @@ export function getClientSpecs() {
   return { browser, os, deviceType };
 }
 
-// Global hook to track current visit and retrieve network geolocation properties
+// ── Record a visit via D1 API (with localStorage fallback for local dev) ──
 export async function recordActiveVisit(actionName?: string): Promise<void> {
   try {
     const specs = getClientSpecs();
-    
-    // Attempt local Storage fetch
-    const rawLogs = localStorage.getItem('pimxmorph_visit_logs');
-    let logs: VisitLog[] = rawLogs ? JSON.parse(rawLogs) : [];
 
-    // Always fetch geographic data from a fast, secure JSON API
-    let geo = { ip: '127.0.0.1', city: 'Unknown', country: 'Iran' };
-    try {
-      const response = await fetch('https://ipapi.co/json/');
-      if (response.ok) {
-        const data = await response.json();
-        geo = {
-          ip: data.ip || '127.0.0.1',
-          city: data.city || 'Unknown',
-          country: data.country_name || 'Iran',
-        };
-      }
-    } catch (e) {
-      // Timezone fallback if API fails
-      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      if (tz.includes('Tehran')) {
-        geo = { ip: 'Local Stream', city: 'Tehran', country: 'Iran' };
-      } else if (tz.includes('Berlin')) {
-        geo = { ip: 'Local Stream', city: 'Berlin', country: 'Germany' };
-      } else {
-        const parts = tz.split('/');
-        geo = { ip: 'Local Stream', city: parts[1] || 'Unknown', country: parts[0] || 'Unknown' };
-      }
+    // Try the D1-backed API first (works on Cloudflare Pages)
+    const res = await fetch('/api/visit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        browser: specs.browser,
+        os: specs.os,
+        deviceType: specs.deviceType,
+        actionPerformed: actionName,
+      }),
+    });
+
+    if (!res.ok) {
+      // API not available (e.g. local dev) — fall back to localStorage
+      recordVisitLocal(specs, actionName);
     }
+  } catch {
+    // Network error / not on Cloudflare — fall back to localStorage
+    const specs = getClientSpecs();
+    recordVisitLocal(specs, actionName);
+  }
+}
 
-    const newLog: VisitLog = {
+// Local fallback: store in localStorage (used only when D1 API is unreachable)
+function recordVisitLocal(
+  specs: { browser: string; os: string; deviceType: string },
+  actionName?: string,
+) {
+  try {
+    // Simple geo for local dev
+    let geo = { ip: '127.0.0.1', city: 'Local', country: 'Dev' };
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const parts = tz.split('/');
+      geo = { ip: 'Local', city: parts[1] || 'Unknown', country: parts[0] || 'Unknown' };
+    } catch { /* ignore */ }
+
+    const rawLogs = localStorage.getItem('pimxmorph_visit_logs');
+    const logs: VisitLog[] = rawLogs ? JSON.parse(rawLogs) : [];
+
+    logs.push({
       id: Math.random().toString(36).substring(2, 9),
       timestamp: new Date().toISOString(),
       ip: geo.ip,
@@ -90,40 +101,52 @@ export async function recordActiveVisit(actionName?: string): Promise<void> {
       country: geo.country,
       browser: specs.browser,
       os: specs.os,
-      deviceType: specs.deviceType,
+      deviceType: specs.deviceType as VisitLog['deviceType'],
       actionPerformed: actionName,
-    };
+    });
 
-    logs.push(newLog);
-    // Keep logs within reasonable bounds (e.g., 2000 items)
-    if (logs.length > 2000) {
-      logs.shift();
-    }
+    if (logs.length > 2000) logs.shift();
     localStorage.setItem('pimxmorph_visit_logs', JSON.stringify(logs));
   } catch (err) {
-    console.error('Error tracking active visit:', err);
+    console.error('Error tracking visit locally:', err);
   }
 }
 
-// Get actual visitor logs stored locally without any fake or seeded data
+// ── Fetch all visit logs from D1 API (with localStorage fallback) ──
+export async function fetchVisitLogs(): Promise<VisitLog[]> {
+  try {
+    const res = await fetch('/api/visit');
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch {
+    // API unreachable — fall back
+  }
+  return getOrCreateHistoricalLogs();
+}
+
+// ── Clear all visit logs from D1 (with localStorage fallback) ──
+export async function clearVisitLogs(): Promise<boolean> {
+  try {
+    const res = await fetch('/api/visit', { method: 'DELETE' });
+    if (res.ok) return true;
+  } catch {
+    // API unreachable — fall back
+  }
+  localStorage.setItem('pimxmorph_visit_logs', JSON.stringify([]));
+  return true;
+}
+
+// ── localStorage-only helper (fallback for local dev) ──
 export function getOrCreateHistoricalLogs(): VisitLog[] {
   const key = 'pimxmorph_visit_logs';
   const existing = localStorage.getItem(key);
   if (existing) {
     try {
       const logs: VisitLog[] = JSON.parse(existing);
-      // Filter out any previously seeded mock data starting with 'seed_'
-      // Also filter out development logs created before 2026-06-20T01:53:00-07:00 (1781945580000 ms) to start fresh from exactly 0
-      const realLogs = logs.filter(log => {
-        if (!log.id || log.id.startsWith('seed_')) return false;
-        const logTime = new Date(log.timestamp).getTime();
-        return logTime >= 1781945580000;
-      });
-      if (realLogs.length !== logs.length) {
-        localStorage.setItem(key, JSON.stringify(realLogs));
-      }
-      return realLogs;
-    } catch (e) {
+      // Filter out old seeded mock data
+      return logs.filter((log) => !log.id?.startsWith('seed_'));
+    } catch {
       return [];
     }
   }
