@@ -1,0 +1,29 @@
+name = "pimxmorph"
+compatibility_date = "2024-12-01"
+pages_build_output_dir = "dist"
+
+# KV Namespace binding — must match the binding name used in functions/api/visit.ts
+# After creating the KV namespace (see below), replace the id with your actual namespace id.
+[[kv_namespaces]]
+binding = "PIMX_VISITS"
+id = "531f9e8914d04ea785e16360563904a2"
+
+# ─────────────────────────────────────────────────────────────────
+# How to set up the KV namespace:
+#
+# 1. Create it via Wrangler CLI:
+#      npx wrangler kv namespace create PIMX_VISITS
+#
+#    This will output something like:
+#      { binding = "PIMX_VISITS", id = "abc123..." }
+#
+# 2. Copy the `id` value and paste it above, replacing <YOUR_KV_NAMESPACE_ID>
+#
+# 3. For Cloudflare Dashboard setup (alternative):
+#    - Go to Workers & Pages → KV → Create a namespace
+#    - Then bind it in: Pages → Your project → Settings → Functions → KV namespace bindings
+#      Variable name: PIMX_VISITS  →  select the namespace you created
+#
+# 4. Deploy:
+#      npx wrangler pages deploy dist --project-name=pimxmorph
+# ─────────────────────────────────────────────────────────────────

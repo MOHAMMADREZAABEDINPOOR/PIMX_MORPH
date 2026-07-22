@@ -1,0 +1,25 @@
+{
+  "name": "PIMXMORPH — Offline File Converter",
+  "short_name": "PIMXMORPH",
+  "description": "100% client-side offline file converter. Convert PDF, images and HEIC privately in your browser.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#0ea5e9",
+  "lang": "en",
+  "categories": ["utilities", "productivity"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

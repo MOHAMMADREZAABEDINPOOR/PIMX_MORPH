@@ -1,0 +1,26 @@
+# PIMXMORPH — Cloudflare Pages security & SEO headers
+# Reference: https://developers.cloudflare.com/pages/configuration/headers/
+
+/*
+  # --- Security headers ---
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  # --- Allow SharedArrayBuffer (client-side heavy compute) ---
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+
+# Long-cache immutable build assets emitted by Vite
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML should always revalidate so SEO/meta updates are picked up
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# robots & sitemap — short cache, frequent revalidation
+/robots.txt
+  Cache-Control: public, max-age=3600
+/sitemap.xml
+  Cache-Control: public, max-age=3600
