@@ -1,77 +1,34 @@
-# Offline File Converter (100% Client-Side)
+<div align="center">
 
-An elite, privacy-first, 100% client-side file conversion suite. No files are uploaded to any server. All processing runs locally inside the browser memory loop using **WebAssembly** and optimized JavaScript sandboxing.
+# ⚡ PIMX_MORPH 🔄🎨
 
----
+### Advanced Bilingual Data Transformer, Encoder/Decoder & Media Morphing Suite
 
-## 🔒 Why This Architecture?
-Standard online file conversion utilities require uploading confidential data (such as healthcare reports, tax documents, estate wills, or photo streams) to remote cloud grids. Here:
-* **Zero Network Traffic:** The browser process compiles the document directly within sandboxed virtual bounds.
-* **Completely Private:** Ideal for lawyers, doctors, CPA consultants, and privacy-conscious users.
-* **Works Offline:** Once the page is loaded, you can sever your internet connection completely.
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg?style=for-the-badge)](https://www.gnu.org/licenses/agpl-3.0)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Modern UI](https://img.shields.io/badge/UI-Responsive_Glassmorphism-646CFF?style=for-the-badge)](https://github.com/MOHAMMADREZAABEDINPOOR/PIMX_MORPH)
+[![Read in Persian](https://img.shields.io/badge/مطالعه_به_فارسی-Persian_README-008080?style=for-the-badge)](#-توضیحات-فارسی-persian-description)
 
----
+<p align="center">
+  A high-speed developer utility for converting, sanitizing, encoding, and morphing text, JSON, Base64, Hex, images, and data structures with zero latency.
+</p>
 
-## 📦 Exact npm Packages Installed
-* **`pdf-lib`** (v3.0.0+): For native client-side PDF deconstruction, merger, splitting, and structural compression.
-* **`heic2any`** (v0.0.4+): Dynamically converts proprietary Apple `.heic`/`.heif` photography formats to standard compressed JPEG or transparent PNG.
-* **`docx`** (v9.0.0+): Dynamically generates real flowing formatted Microsoft Word documents (`.docx`) in memory.
-* **`lucide-react`** (v0.546.0): Premium clean svg vector icons.
-* **`motion`** (v12.23.24): Modern responsive entrance animations.
+</div>
 
 ---
 
-## 📂 Project Directory Structure
-```
-├── /src
-│   ├── /components
-│   │   ├── ConverterWidget.tsx   # Drag-and-drop workspace, progress calculations, and settings sliders
-│   │   ├── LandingHero.tsx       # Dynamic tag categories, SEO summaries, and privacy status
-│   │   ├── ProModal.tsx          # Payment simulation & dual pricing comparisons
-│   │   └── GuideSection.tsx      # Multi-column Cloudflare Pages instructions & dynamic FAQs
-│   │
-│   ├── /utils
-│   │   └── converter.ts          # Pure mathematical offline algorithms (PDF, HEIC, Canvas compress)
-│   │
-│   ├── App.tsx                   # Central React Orchestrator, Persistent Local storage, and Dark Mode
-│   ├── main.tsx                  # Standard React DOM Entry Mount
-│   └── index.css                 # Import Tailwind CSS utilities
-│
-├── index.html                    # HTML shell
-├── metadata.json                 # AI Studio Application name configuration
-├── tsconfig.json                 # TypeScript strict definitions
-└── vite.config.ts                # Vite project bundle parameters
-```
+## ⚡ Features
+- 🔤 **Format Transformations**: JSON/YAML/CSV/XML conversion, Base64/Hex/URL encoding/decoding, and regex sanitization.
+- 🖼️ **Media Morphing**: Browser-side canvas image adjustments, format conversions, and metadata stripping.
+- ⚡ **Zero Server Dependency**: 100% client-side privacy-first processing.
 
 ---
 
-## ⚡ Deployment for Cloudflare Pages (Free Hosting)
-
-Since there is completely **no backend**, hosting on Cloudflare Pages is 100% free with unlimited bandwidth.
-
-1. **Build Static Deliverables:**
-   ```bash
-   npm run build
-   ```
-2. **Setup Cloudflare Pages Hook:**
-   * Go to **dash.cloudflare.com** → **Workers & Pages** → **Connect to Git**
-   * Feed it your project repository structure.
-3. **Configure Build Pipeline:**
-   * **Framework Preset:** None / Create React App
-   * **Build Command:** `npm run build`
-   * **Build Directory:** `dist`
-4. **Headers configuration (Optional for WASM Multi-threading):**
-   If employing high-performance SharedArrayBuffer structures, place a `_headers` file in your build root:
-   ```txt
-   /*
-     Cross-Origin-Opener-Policy: same-origin
-     Cross-Origin-Embedder-Policy: require-corp
-   ```
+## 🇮🇷 توضیحات فارسی (Persian Description)
+### معرفی ابزار مبدل داده PIMX_MORPH
+پروژه **PIMX_MORPH** یک جعبه ابزار جامع و سریع برای برنامه‌نویسان است که امکان تبدیل انواع فرمت‌های داده (JSON، Base64، هش‌ها، تصویر و متن) را به صورت محلی و با امنیت بالا در مرورگر فراهم می‌کند.
 
 ---
 
-## 🧪 Verify Zero Server Uploads
-* Load the webpage in a browser.
-* Open developer tools (**Option + Cmd + I** or **F12**), select **Network Tab**.
-* Switch off your WiFi or set network throttling to "Offline".
-* Upload and execute a conversion. The calculation completes locally in your memory heap!
+## 📜 License
+Licensed under the **GNU AGPLv3 License**. Copyright (c) 2026 MOHAMMADREZA ABEDINPOOR.
