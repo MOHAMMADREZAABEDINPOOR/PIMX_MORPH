@@ -1,0 +1,205 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#050814" />
+      <stop offset="50%" stop-color="#0a0f24" />
+      <stop offset="100%" stop-color="#04060f" />
+    </linearGradient>
+
+    <!-- Neon Gradients -->
+    <linearGradient id="cyanPurple" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00f0ff">
+        <animate attributeName="stop-color" values="#00f0ff;#7928ca;#00f0ff" dur="6s" repeatCount="indefinite" />
+      </stop>
+      <stop offset="50%" stop-color="#7928ca">
+        <animate attributeName="stop-color" values="#7928ca;#ff0080;#7928ca" dur="6s" repeatCount="indefinite" />
+      </stop>
+      <stop offset="100%" stop-color="#ff0080">
+        <animate attributeName="stop-color" values="#ff0080;#00f0ff;#ff0080" dur="6s" repeatCount="indefinite" />
+      </stop>
+    </linearGradient>
+
+    <linearGradient id="wireframeGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.8" />
+      <stop offset="50%" stop-color="#a855f7" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#ec4899" stop-opacity="0.9" />
+    </linearGradient>
+
+    <linearGradient id="gridGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0" />
+      <stop offset="40%" stop-color="#00f0ff" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="#a855f7" stop-opacity="0.4" />
+    </linearGradient>
+
+    <!-- Glow Filter -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <style>
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-12px) rotate(1.5deg); }
+    }
+    @keyframes pulseCube {
+      0%, 100% { transform: scale(1) rotateX(25deg) rotateY(-35deg); }
+      50% { transform: scale(1.05) rotateX(28deg) rotateY(-30deg); }
+    }
+    @keyframes dashMove {
+      to { stroke-dashoffset: -100; }
+    }
+    @keyframes waveRibbon {
+      0% { transform: translateX(0); }
+      50% { transform: translateX(-40px); }
+      100% { transform: translateX(0); }
+    }
+    .floating-badge {
+      animation: floatSlow 5s ease-in-out infinite;
+    }
+    .data-stream {
+      font-family: "Fira Code", monospace;
+      font-size: 11px;
+      fill: #00f0ff;
+      opacity: 0.55;
+    }
+  </style>
+
+  <!-- Background Canvas -->
+  <rect width="1200" height="360" fill="url(#bgGrad)" />
+
+  <!-- 3D Perspective Grid at Bottom -->
+  <g opacity="0.6">
+    <!-- Horizon Line -->
+    <line x1="0" y1="260" x2="1200" y2="260" stroke="#00f0ff" stroke-opacity="0.3" stroke-width="1" />
+    <!-- Perspective Grid Lines -->
+    <line x1="600" y1="260" x2="0" y2="360" stroke="url(#gridGrad)" stroke-width="1.5" />
+    <line x1="600" y1="260" x2="150" y2="360" stroke="url(#gridGrad)" stroke-width="1.5" />
+    <line x1="600" y1="260" x2="300" y2="360" stroke="url(#gridGrad)" stroke-width="1.5" />
+    <line x1="600" y1="260" x2="450" y2="360" stroke="url(#gridGrad)" stroke-width="1.5" />
+    <line x1="600" y1="260" x2="600" y2="360" stroke="url(#gridGrad)" stroke-width="1.5" />
+    <line x1="600" y1="260" x2="750" y2="360" stroke="url(#gridGrad)" stroke-width="1.5" />
+    <line x1="600" y1="260" x2="900" y2="360" stroke="url(#gridGrad)" stroke-width="1.5" />
+    <line x1="600" y1="260" x2="1050" y2="360" stroke="url(#gridGrad)" stroke-width="1.5" />
+    <line x1="600" y1="260" x2="1200" y2="360" stroke="url(#gridGrad)" stroke-width="1.5" />
+    <!-- Horizontal Grid Rings -->
+    <line x1="0" y1="280" x2="1200" y2="280" stroke="#00f0ff" stroke-opacity="0.15" stroke-width="1" />
+    <line x1="0" y1="310" x2="1200" y2="310" stroke="#00f0ff" stroke-opacity="0.25" stroke-width="1" />
+    <line x1="0" y1="350" x2="1200" y2="350" stroke="#a855f7" stroke-opacity="0.4" stroke-width="1.5" />
+  </g>
+
+  <!-- Ambient Light Orbs -->
+  <circle cx="180" cy="100" r="140" fill="#00f0ff" opacity="0.08" filter="url(#glow)" />
+  <circle cx="980" cy="160" r="180" fill="#7928ca" opacity="0.12" filter="url(#glow)" />
+  <circle cx="600" cy="40" r="100" fill="#ff0080" opacity="0.06" filter="url(#glow)" />
+
+  <!-- Animated Binary & Hex Streams Floating in Space -->
+  <text x="50" y="50" class="data-stream">01010000 01001001 01001101 01011000</text>
+  <text x="50" y="70" class="data-stream">0x7F 0x45 0x4C 0x46 (ELF_HEADER)</text>
+  <text x="50" y="90" class="data-stream">SHA256: e3b0c44298fc1c149afbf4c8996fb924</text>
+  <text x="350" y="45" class="data-stream" fill="#a855f7">BASE64_STREAM // 0x4D4F525048</text>
+  <text x="920" y="55" class="data-stream" fill="#ec4899">KECCAK_256 // AES_256_GCM</text>
+  <text x="920" y="75" class="data-stream">ROT13_MODULO // 26_ALPHABET</text>
+
+  <!-- 3D ISOMETRIC MORPHING CUBE (Center-Right) -->
+  <g transform="translate(940, 175)" class="floating-badge">
+    <!-- Outer Glow Hologram Ring -->
+    <circle cx="0" cy="0" r="110" fill="none" stroke="url(#cyanPurple)" stroke-width="1.5" stroke-dasharray="8 6" opacity="0.6">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="25s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="0" cy="0" r="85" fill="none" stroke="#00f0ff" stroke-width="1" stroke-dasharray="4 8" opacity="0.4">
+      <animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="18s" repeatCount="indefinite" />
+    </circle>
+
+    <!-- Isometric 3D Cube Faces -->
+    <!-- Top Face -->
+    <polygon points="0,-70 60,-35 0,0 -60,-35" fill="#00f0ff" fill-opacity="0.25" stroke="#00f0ff" stroke-width="2" filter="url(#softGlow)" />
+    <!-- Left Face -->
+    <polygon points="-60,-35 0,0 0,70 -60,35" fill="#7928ca" fill-opacity="0.35" stroke="#a855f7" stroke-width="2" />
+    <!-- Right Face -->
+    <polygon points="0,0 60,-35 60,35 0,70" fill="#ec4899" fill-opacity="0.25" stroke="#ec4899" stroke-width="2" />
+
+    <!-- Internal Cyber Core Coordinate Axis -->
+    <line x1="0" y1="0" x2="0" y2="-50" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.8" />
+    <line x1="0" y1="0" x2="45" y2="25" stroke="#00f0ff" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.8" />
+    <line x1="0" y1="0" x2="-45" y2="25" stroke="#ff0080" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.8" />
+
+    <!-- Core Glowing Sphere -->
+    <circle cx="0" cy="0" r="14" fill="#00f0ff" filter="url(#glow)">
+      <animate attributeName="r" values="12;18;12" dur="3s" repeatCount="indefinite" />
+      <animate attributeName="fill" values="#00f0ff;#ff0080;#7928ca;#00f0ff" dur="6s" repeatCount="indefinite" />
+    </circle>
+
+    <!-- Floating 3D Node Labels -->
+    <g transform="translate(68, -45)">
+      <rect x="-8" y="-12" width="65" height="20" rx="4" fill="#050814" stroke="#00f0ff" stroke-width="1" opacity="0.9" />
+      <text x="24" y="2" font-family="'Fira Code', monospace" font-size="10" fill="#00f0ff" font-weight="bold" text-anchor="middle">HEX ➔ BIN</text>
+    </g>
+    <g transform="translate(-115, 20)">
+      <rect x="-8" y="-12" width="68" height="20" rx="4" fill="#050814" stroke="#a855f7" stroke-width="1" opacity="0.9" />
+      <text x="26" y="2" font-family="'Fira Code', monospace" font-size="10" fill="#a855f7" font-weight="bold" text-anchor="middle">BASE64</text>
+    </g>
+    <g transform="translate(10, 85)">
+      <rect x="-8" y="-12" width="65" height="20" rx="4" fill="#050814" stroke="#ec4899" stroke-width="1" opacity="0.9" />
+      <text x="24" y="2" font-family="'Fira Code', monospace" font-size="10" fill="#ec4899" font-weight="bold" text-anchor="middle">SHA-256</text>
+    </g>
+  </g>
+
+  <!-- LEFT BRANDING & TYPOGRAPHY -->
+  <g transform="translate(80, 140)">
+    <!-- Pre-Title Tag -->
+    <g transform="translate(0, -35)">
+      <rect x="0" y="-14" width="220" height="24" rx="12" fill="#00f0ff" fill-opacity="0.1" stroke="#00f0ff" stroke-width="1" />
+      <circle cx="12" cy="-2" r="4" fill="#00f0ff">
+        <animate attributeName="opacity" values="0.4;1;0.4" dur="2s" repeatCount="indefinite" />
+      </circle>
+      <text x="26" y="2" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="800" fill="#00f0ff" letter-spacing="2">PIMX ECOSYSTEM CORE</text>
+    </g>
+
+    <!-- Main Title -->
+    <text x="0" y="30" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, 'Montserrat', sans-serif" font-size="52" font-weight="900" fill="url(#cyanPurple)" filter="url(#glow)" letter-spacing="3">
+      PIMX_MORPH
+    </text>
+
+    <!-- Subtitle -->
+    <text x="0" y="65" font-family="'Fira Code', monospace" font-size="16" font-weight="600" fill="#e2e8f0" letter-spacing="1">
+      ⚡ Universal Cryptographic Workbench &amp; Data Morphing Lab
+    </text>
+
+    <!-- Feature Pills -->
+    <g transform="translate(0, 88)">
+      <!-- Pill 1 -->
+      <rect x="0" y="0" width="165" height="26" rx="6" fill="#0a1026" stroke="#00f0ff" stroke-width="1" />
+      <text x="82" y="17" font-family="'Fira Code', monospace" font-size="11" font-weight="bold" fill="#00f0ff" text-anchor="middle">🔒 Zero Server Egress</text>
+
+      <!-- Pill 2 -->
+      <rect x="175" y="0" width="160" height="26" rx="6" fill="#0a1026" stroke="#a855f7" stroke-width="1" />
+      <text x="255" y="17" font-family="'Fira Code', monospace" font-size="11" font-weight="bold" fill="#c084fc" text-anchor="middle">⚡ Web Crypto API</text>
+
+      <!-- Pill 3 -->
+      <rect x="345" y="0" width="150" height="26" rx="6" fill="#0a1026" stroke="#ec4899" stroke-width="1" />
+      <text x="420" y="17" font-family="'Fira Code', monospace" font-size="11" font-weight="bold" fill="#f472b6" text-anchor="middle">🌐 23+ Languages</text>
+
+      <!-- Pill 4 -->
+      <rect x="505" y="0" width="155" height="26" rx="6" fill="#0a1026" stroke="#10b981" stroke-width="1" />
+      <text x="582" y="17" font-family="'Fira Code', monospace" font-size="11" font-weight="bold" fill="#34d399" text-anchor="middle">🚀 Client-Side Fast</text>
+    </g>
+  </g>
+
+  <!-- Bottom Glowing Edge Border -->
+  <line x1="0" y1="358" x2="1200" y2="358" stroke="url(#cyanPurple)" stroke-width="3" filter="url(#softGlow)" />
+</svg>
