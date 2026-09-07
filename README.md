@@ -367,7 +367,8 @@ hashData();
 <a id="persian-documentation" name="persian-documentation"></a>
 <div id="persian-documentation"></div>
 
-## 🇮🇷 بخش فوق‌العاده جامع، تفصیلی و فنی به زبان فارسی (Persian Documentation)
+## Persian Documentation
+### 🇮🇷 مستندات فوق‌العاده جامع، تفصیلی و فنی به زبان فارسی
 
 ### ۱. فلسفه بنیادین، چرایی و ضرورت وجودی PIMX_MORPH
 در فعالیت‌های روزمره توسعه نرم‌افزار، مهندسی معکوس، تست نفوذ (Penetration Testing) و مدیریت سرور، مهندسان به طور مداوم با انواع مختلفی از داده‌ها سر و کار دارند:
