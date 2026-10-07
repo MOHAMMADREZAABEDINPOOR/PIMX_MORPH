@@ -1,27 +1,41 @@
 <div align="center">
 
-<img src="assets/readme/hero.gif" width="1200" alt="PIMX MORPH — rotating 3D geometry" />
+<img src="assets/readme/hero.gif" width="1200" alt="PIMX MORPH: file formats moving through a transformation ring" />
 
 **[English](README.md) · [فارسی](README.fa.md)**
 
-<img src="assets/readme/identity.svg" width="1200" alt="web / English and Persian documentation" />
-
 </div>
 
-# PIMX MORPH
+# 🔄 PIMX MORPH
 
 A browser conversion workbench for images, PDFs, documents, audio and structured data. Separate converter functions handle each supported transformation.
 
 [GitHub](https://github.com/MOHAMMADREZAABEDINPOOR/PIMX_MORPH) · [PIMX / Profile](https://github.com/MOHAMMADREZAABEDINPOOR) · [Static artwork](assets/readme/hero.png)
 
-## Features
+| At a glance | Details |
+|:---|:---|
+| 🔄 Experience | Web application / browser experience |
+| 🧰 Built with | `React` · `Vite` · `TypeScript` · `Express` |
+| 🌐 Documentation | [English](README.md) · [فارسی](README.fa.md) |
 
-- Image format conversion, HEIC handling and image-to-PDF
-- PDF merge, split, rendering and text extraction
-- JSON/CSV conversion and document text tools
-- Localized workspace, themes and optional visit tracking
+[✨ Features](#features) · [🚀 Getting started](#getting-started) · [⚙️ Configuration](#configuration) · [🌍 Deployment](#deployment)
 
-## Stack
+---
+
+<a id="features"></a>
+
+## ✨ Features
+
+| Area | Included capability |
+|:---|:---|
+| 🎨 Visuals | Image format conversion, HEIC handling and image-to-PDF |
+| ⚡ Workflow | PDF merge, split, rendering and text extraction |
+| 📁 Files | JSON/CSV conversion and document text tools |
+| 🌐 Experience | Localized workspace, themes and optional visit tracking |
+
+<a id="stack"></a>
+
+## 🧰 Stack
 
 | Tool | Version / source |
 |---|---|
@@ -32,7 +46,9 @@ A browser conversion workbench for images, PDFs, documents, audio and structured
 | Motion | `^12.23.24` |
 | Tailwind CSS | `^4.1.14` |
 
-## Getting started
+<a id="getting-started"></a>
+
+## 🚀 Getting started
 
 Node.js 22.12+ and the package manager declared in package.json. Install dependencies from the checked-in lockfile where available.
 
@@ -44,7 +60,9 @@ npm ci
 npm run dev
 ```
 
-## Configuration
+<a id="configuration"></a>
+
+## ⚙️ Configuration
 
 These names are found in the example configuration or source; not all are required. Check their defaults/usage in those files and supply secrets only in your local or hosting environment.
 
@@ -55,11 +73,15 @@ These names are found in the example configuration or source; not all are requir
 
 Hosting bindings: `PIMX_VISITS`.
 
-## Usage
+<a id="usage"></a>
+
+## 🎯 Usage
 
 Choose a converter card, select a matching file and download the output. Use merge/split controls for PDFs and the JSON/CSV tools for structured data.
 
-## Project structure
+<a id="project-structure"></a>
+
+## 🗂️ Project structure
 
 | Path | Role |
 |---|---|
@@ -73,7 +95,16 @@ Choose a converter card, select a matching file and download the output. Use mer
 | [`tsconfig.json`](tsconfig.json) | Project entry/configuration file |
 | [`wrangler.toml`](wrangler.toml) | Project entry/configuration file |
 
-## Commands and checks
+<a id="commands-and-checks"></a>
+
+## 🧪 Commands and checks
+
+| Command | Purpose |
+|:---|:---|
+| `npm run dev` | 🧑‍💻 Development server |
+| `npm run build` | 📦 Production build |
+| `npm run preview` | 👀 Preview a build |
+| `npm run lint` | 🧹 Lint source |
 
 ```bash
 npm run dev
@@ -84,28 +115,46 @@ npm run lint
 
 These commands are declared in package.json; the list is not a test execution report. Test commands may need a browser, service or prepared database.
 
-## Deployment
+<a id="deployment"></a>
+
+## 🌍 Deployment
 
 Deploy the build according to its architecture: server-backed projects need a Node process; static Vite frontends can host dist. Pages functions, KV or D1 require separate configuration.
 
-## Limitations
+<a id="limitations"></a>
+
+## 📌 Limitations
 
 PDF-to-Word reconstructs available content and may lose layout; scanned documents need OCR that this snapshot does not guarantee. Large files and browser codec support constrain conversions.
 
-## Troubleshooting
+<a id="troubleshooting"></a>
+
+## 🛠️ Troubleshooting
 
 - Missing packages: install dependencies using the project’s package manager.
 - API/network failure: check the configured origin, provider and hosting bindings.
 - Old assets: rebuild when a build script exists, then clear the browser cache.
 
-## Contributing
+<a id="contributing"></a>
+
+## 🤝 Contributing
 
 Create a focused branch, verify the affected behavior and explain the change clearly. Keep private data, build outputs and local databases out of commits.
 
-## License
+<a id="license"></a>
+
+## 📄 License
 
 No repository-level license file is included in this snapshot. Public visibility alone does not grant reuse rights; contact the repository owner for terms.
 
 ---
 
 Part of **PIMX** · Documentation in English and Persian.
+
+---
+
+<div align="center">
+
+🔄 **PIMX MORPH** · [English](README.md) · [فارسی](README.fa.md)
+
+</div>
