@@ -35,6 +35,9 @@ try {
   // Preserve a usable error page for static hosts.
   const shell404 = shell.replace(/<title>.*?<\/title>/s, '<title>Page not found | PIMX MORPH</title>').replace(/<meta name="robots" content="[^"]*"\s*\/?\s*>/, '<meta name="robots" content="noindex, follow">').replace('<div id="root"></div>', '<div id="root"><main><h1>Page not found.</h1><a href="/">Back home</a></main></div>');
   await writeFile('dist/404.html', shell404);
+  // Give the admin route its own shell so Pages' clean URLs need no rewrite.
+  const adminShell = shell.replace(/<title>.*?<\/title>/s, '<title>Admin | PIMX MORPH</title>').replace(/<meta name="robots" content="[^"]*"\s*\/?\s*>/, '<meta name="robots" content="noindex, nofollow">');
+  await writeFile('dist/pimxmorphadmin.html', adminShell);
 } finally {
   await unlink(renderer);
 }

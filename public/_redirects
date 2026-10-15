@@ -1,5 +1,3 @@
-# Public routes have prerendered HTML; unknown paths retain a real 404.
-/upload /upload.html 200
-/offline /offline.html 200
-/library /library.html 200
-/pimxmorphadmin /index.html 200
+# Pages serves prerendered .html files at their extensionless URLs.
+# Rewriting /upload to /upload.html would loop with Pages' clean-URL redirect.
+# Unknown paths use 404.html; the admin route has its own HTML shell.
