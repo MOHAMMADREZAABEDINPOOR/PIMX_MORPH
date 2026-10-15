@@ -1,4 +1,6 @@
 {
+  "include": ["src", "scripts", "tests", "*.ts"],
+  "exclude": ["node_modules", "dist", ".impeccable", "playwright-report", "test-results"],
   "compilerOptions": {
     "target": "ES2022",
     "experimentalDecorators": true,

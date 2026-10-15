@@ -1,0 +1,10 @@
+{
+  "origin": "Original interwoven Shift vector mark authored for PIMX MORPH in assets/brand/geometry.json. Wordmark outlined from Manrope at weight 750; SIL OFL 1.1, see assets/brand/Manrope-OFL.txt. All PNG files are direct Chromium rasterizations; no external imagery or raster tracing.",
+  "generator": "scripts/create-brand.mjs",
+  "palette": {
+    "blue": "#2349e8",
+    "orange": "#ed8058",
+    "paper": "#f5f5f0",
+    "ink": "#22241f"
+  }
+}

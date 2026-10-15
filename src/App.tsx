@@ -1,294 +1,244 @@
-import React, { useState, useEffect } from 'react';
-import { Sun, Moon, ShieldCheck } from 'lucide-react';
-import { ConversionType, ConverterInfo } from './types';
-import LandingHero from './components/LandingHero';
-import ConverterWidget from './components/ConverterWidget';
-import GuideSection from './components/GuideSection';
-import LanguageDropdown from './components/LanguageDropdown';
-import { Language, LANG_NAMES, TRANSLATIONS, CONVERTER_LOCALIZATION } from './utils/translations';
-import AdminPanel from './components/AdminPanel';
-import { recordActiveVisit, getOrCreateHistoricalLogs } from './utils/tracker';
-import { updateSeo } from './utils/seo';
-
-const CONVERTERS: ConverterInfo[] = [
-  {
-    id: 'universal',
-    title: 'Smart Auto-Detect',
-    description: 'Drop custom PDF, HEIC, JPEG, PNG, BMP, or GIF files. The system auto-identifies appropriate tools instantly.',
-    icon: 'Sparkles',
-    acceptedTypes: ['.pdf', '.png', '.jpg', '.jpeg', '.webp', '.gif', '.bmp', '.svg', '.heic', '.heif', '.tiff'],
-    maxFreeSize: 5 * 1024 * 1024,
-    maxProSize: 50 * 1024 * 1024,
-    seoTitle: 'Smart Single-Action File-Type Classifier & Converter client suite',
-    seoDescription: 'Secure offline auto-detection engine. Identify files instantly in browser memory thread to save time.'
-  },
-  {
-    id: 'pdf-to-img',
-    title: 'PDF to JPG / PNG',
-    description: 'Render PDF page views into individual images offline.',
-    icon: 'FileImage',
-    acceptedTypes: ['.pdf'],
-    maxFreeSize: 5 * 1024 * 1024,
-    maxProSize: 50 * 1024 * 1024,
-    seoTitle: 'Convert PDF Documents to High-Fidelity Images (JPEG/PNG) Completely Locally',
-    seoDescription: 'Prune pages or compile clean visual files straight inside your client cache memory thread. High-resolution canvas renderings support flawless output.'
-  },
-  {
-    id: 'pdf-to-docx',
-    title: 'PDF to Word (DOCX)',
-    description: 'Deconstruct PDF page elements into editable Word Documents.',
-    icon: 'FileText',
-    acceptedTypes: ['.pdf'],
-    maxFreeSize: 5 * 1024 * 1024,
-    maxProSize: 50 * 1024 * 1024,
-    seoTitle: 'Extract Structured Text from PDF to Editable MS Word Documents Offline',
-    seoDescription: 'Convert digital reports, tax agreements, and draft bills safely. Employs advanced canvas token line translation parameters without sending bytes to a cloud host.'
-  },
-  {
-    id: 'image-convert',
-    title: 'Image Converter',
-    description: 'Compress and adapt standard images to JPG, PNG, WebP, GIF, or BMP.',
-    icon: 'Sliders',
-    acceptedTypes: ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.bmp', '.svg', '.tiff'],
-    maxFreeSize: 5 * 1024 * 1024,
-    maxProSize: 50 * 1024 * 1024,
-    seoTitle: 'Lossless Image Format Conversions & Asset Compression Parameters',
-    seoDescription: 'Resize, shrink, or optimize photography assets. Formats supported: transparent PNG vectors, light WebP assets, or flattened JPEGs with customizable sliders.'
-  },
-  {
-    id: 'image-to-pdf',
-    title: 'Image to PDF',
-    description: 'Compile single or multiple photographs into high-resolution PDF pages.',
-    icon: 'FileCode',
-    acceptedTypes: ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.bmp', '.svg', '.heic', '.heif', '.tiff'],
-    maxFreeSize: 5 * 1024 * 1024,
-    maxProSize: 50 * 1024 * 1024,
-    seoTitle: 'Compile standard images directly into high-fidelity PDF documents',
-    seoDescription: 'Integrate WebP, JPEG, PNG, or iOS HEIC snaps into formatted pages offline.'
-  },
-  {
-    id: 'merge-pdf',
-    title: 'Merge PDFs',
-    description: 'Combine multiple PDF filings into a single unified workspace.',
-    icon: 'Combine',
-    acceptedTypes: ['.pdf'],
-    maxFreeSize: 5 * 1024 * 1024, // Per file
-    maxProSize: 50 * 1024 * 1024,
-    seoTitle: 'Merge PDF Documents Offline - Drag, Reorder and Join Multi-page Files',
-    seoDescription: 'Collate quarterly records, portfolio items, or application files inside a single stream safely using pdf-lib.'
-  },
-  {
-    id: 'split-pdf',
-    title: 'Split PDF',
-    description: 'Deconstruct a master PDF file into targeted extract intervals.',
-    icon: 'Scissors',
-    acceptedTypes: ['.pdf'],
-    maxFreeSize: 5 * 1024 * 1024,
-    maxProSize: 50 * 1024 * 1024,
-    seoTitle: 'Deconstruct & Slice Specific PDF Pages in Browser Sandbox',
-    seoDescription: 'Extract target ranges (e.g. 1-2, 4) into newly created document objects without breaking critical formatting structures.'
-  },
-  {
-    id: 'compress-pdf',
-    title: 'Compress PDF',
-    description: 'Optimize stream dictionaries to shrink PDF size client-side.',
-    icon: 'FileCode',
-    acceptedTypes: ['.pdf'],
-    maxFreeSize: 5 * 1024 * 1024,
-    maxProSize: 50 * 1024 * 1024,
-    seoTitle: 'Compress and Optimize PDF File Bounds Privately',
-    seoDescription: 'Shrink overall storage space by compiling underlying objects and pruning redundant fonts offline. Maintain readability and text layers.'
-  },
-  {
-    id: 'heic-to-img',
-    title: 'HEIC to JPG / PNG',
-    description: 'Unlock proprietary iOS HEIF/HEIC photos directly in browser.',
-    icon: 'FileImage',
-    acceptedTypes: ['.heic', '.heif'],
-    maxFreeSize: 5 * 1024 * 1024,
-    maxProSize: 50 * 1024 * 1024,
-    seoTitle: 'Convert HEIC/HEIF Pictures from iPhone directly to JPG or PNG',
-    seoDescription: 'No need to buy cloud utilities. Decrypt standard apple raw photos and view them on Windows or Linux devices with high quality output.'
+import RouteSections from "./components/RouteSections";
+import KineticFooter from "./components/KineticFooter";
+import { lazy, Suspense, useEffect, useState } from "react";
+import {
+  ArrowDown,
+  ArrowUpRight,
+  Moon,
+  Sun,
+  ShieldCheck,
+  Infinity as InfinityIcon,
+  Play,
+  Pause,
+} from "lucide-react";
+import { AnimatePresence, MotionConfig } from "motion/react";
+import HomeFAQ from "./components/HomeFAQ";
+import HomeHero from "./components/HomeHero";
+import Library from "./components/Library";
+import Studio from "./components/Studio";
+import InstallPanel from "./components/InstallPanel";
+import { Language, LANG_NAMES } from "./utils/translations";
+import { Category } from "./utils/catalog";
+import { updateSeo } from "./utils/seo";
+import { copyFor } from "./utils/studioCopy";
+import BrandMark from "./components/BrandMark";
+import LanguageDropdown from "./components/LanguageDropdown";
+import SplashLoader from "./components/SplashLoader";
+import HomeSections, { HomeFinale } from "./components/HomeSections";
+const AdminPanel = lazy(() => import("./components/AdminPanel"));
+function stored(key: string, fallback: string) {
+  try {
+    return localStorage.getItem(key) || fallback;
+  } catch {
+    return fallback;
   }
-];
-
+}
 export default function App() {
-  const [selectedType, setSelectedType] = useState<ConversionType>('universal');
-  const [isProEnabled, setIsProEnabled] = useState<boolean>(true);
-  const [isProModalOpen, setIsProModalOpen] = useState<boolean>(false);
-  const [processedCount, setProcessedCount] = useState<number>(0);
-  const [darkMode, setDarkMode] = useState<boolean>(true);
-  const [lang, setLang] = useState<Language>('en');
-  const [isAdminView, setIsAdminView] = useState<boolean>(false);
-
-  // Initialize theme mode & conversions counts from localStorage safely
+  const [route, setRoute] = useState(() => location.pathname === '/' && new URLSearchParams(location.search).has('tool') ? '/upload' : location.pathname.replace(/\/$/, '') || '/');
   useEffect(() => {
-    // Determine path routing to show Admin Panel
-    if (window.location.pathname === '/pimxmorphadmin') {
-      setIsAdminView(true);
-    } else {
-      setIsAdminView(false);
-    }
-
-    // Capture the visitor metrics (device, browser, exact date & dynamic location lookup)
-    getOrCreateHistoricalLogs(); // Seed initially to keep full dashboard functional
-    if (window.location.pathname !== '/pimxmorphadmin') {
-      recordActiveVisit().catch(e => console.error('Tracker registration error:', e));
-    }
-
-    const savedTheme = localStorage.getItem('offline_converter_theme');
-    if (savedTheme === 'light') {
-      setDarkMode(false);
-    } else {
-      setDarkMode(true);
-    }
-
-    const savedLang = localStorage.getItem('offline_converter_lang');
-    if (savedLang && Object.keys(LANG_NAMES).includes(savedLang)) {
-      setLang(savedLang as Language);
-    }
-
-    setIsProEnabled(true);
-
-    // Check dynamic daily date
-    const today = new Date().toDateString();
-    const savedDate = localStorage.getItem('offline_converter_date');
-    const savedCount = localStorage.getItem('offline_converter_processed_day_count');
-
-    if (savedDate === today && savedCount) {
-      setProcessedCount(parseInt(savedCount, 10));
-    } else {
-      // New day: reset usage counters
-      localStorage.setItem('offline_converter_date', today);
-      localStorage.setItem('offline_converter_processed_day_count', '0');
-      setProcessedCount(0);
-    }
+    const pop = () => setRoute(location.pathname.replace(/\/$/, '') || '/');
+    const navigate = (event: MouseEvent) => {
+      const anchor = (event.target as Element).closest?.('a');
+      if (!anchor || anchor.target || anchor.hasAttribute('download') || event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+      const url = new URL(anchor.href);
+      if (url.origin !== location.origin || !['/', '/upload', '/library', '/offline'].includes(url.pathname)) return;
+      if (url.pathname === location.pathname && url.search === location.search && url.hash) return;
+      event.preventDefault();
+      url.searchParams.delete('lang');
+      history.pushState({}, '', url.pathname + url.search + url.hash);
+      setRoute(url.pathname); window.scrollTo({ top: 0, behavior: 'instant' });
+      requestAnimationFrame(() => { if(url.hash) document.getElementById(url.hash.slice(1))?.scrollIntoView(); else document.querySelector<HTMLElement>('main [data-route-heading], main h1:not([hidden] h1)')?.focus({ preventScroll: true }); });
+    };
+    addEventListener('popstate', pop); document.addEventListener('click', navigate);
+    return () => { removeEventListener('popstate', pop); document.removeEventListener('click', navigate); };
   }, []);
-
-  const handleLanguageChange = (newLang: Language) => {
-    setLang(newLang);
-    localStorage.setItem('offline_converter_lang', newLang);
-  };
-
-  // Update localStorage when conversion items increment
-  const handleProcessedCountChange = (count: number) => {
-    setProcessedCount(count);
-    localStorage.setItem('offline_converter_processed_day_count', count.toString());
-  };
-
-  const handleToggleTheme = () => {
-    const newMode = !darkMode;
-    setDarkMode(newMode);
-    localStorage.setItem('offline_converter_theme', newMode ? 'dark' : 'light');
-  };
-
-  const handleUpgradeSuccess = () => {
-    setIsProEnabled(true);
-    localStorage.setItem('offline_converter_pro_bool', 'true');
-  };
-
-  // Map local active language fields onto core Converters payload safely
-  const getLocalizedConverters = (): ConverterInfo[] => {
-    return CONVERTERS.map((c) => {
-      const loc = CONVERTER_LOCALIZATION[lang]?.[c.id] || CONVERTER_LOCALIZATION['en']?.[c.id];
-      return {
-        ...c,
-        title: loc?.title || c.title,
-        description: loc?.description || c.description,
-        seoTitle: loc?.seoTitle || c.seoTitle,
-        seoDescription: loc?.seoDescription || c.seoDescription,
-      };
-    });
-  };
-
-  const localizedConverters = getLocalizedConverters();
-  const activeConverter = localizedConverters.find((c) => c.id === selectedType) || localizedConverters[0];
-  const t = (key: string) => TRANSLATIONS[lang]?.[key] || TRANSLATIONS['en']?.[key] || key;
-  const isRtl = lang === 'fa' || lang === 'ar';
-
-  // Dynamic SEO Metadata Injection Hook — delegates to utils/seo.ts
+  const [lang, setLang] = useState<Language>(() => {
+    const candidate =
+      new URLSearchParams(location.search).get("lang") ||
+      stored("offline_converter_lang", "en");
+    return candidate in LANG_NAMES ? (candidate as Language) : "en";
+  });
+  const [theme, setTheme] = useState(() =>
+    stored(
+      "offline_converter_theme",
+      matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
+    ),
+  );
+  const [category, setCategory] = useState<Category>("all");
+  const [scenePaused, setScenePaused] = useState(false);
+  const [preparing, setPreparing] = useState(true);
+  const [entered, setEntered] = useState(false);
+  const booting = preparing || !entered;
   useEffect(() => {
-    if (!activeConverter) return;
+    let active = true;
+    const timeout = setTimeout(() => {
+      if (active) setPreparing(false);
+    }, 4500);
+    Promise.allSettled([document.fonts.ready]).then(() => {
+      if (active) setPreparing(false);
+      clearTimeout(timeout);
+    });
+    return () => {
+      active = false;
+      clearTimeout(timeout);
+    };
+  }, []);
+  const fa = lang === "fa",
+    rtl = fa || lang === "ar";
+  const say = copyFor(lang);
+  useEffect(() => {
+    document.documentElement.dir = rtl ? "rtl" : "ltr";
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.backgroundColor =
+      theme === "dark" ? "#16181c" : "#f5f5f0";
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute("content", theme === "dark" ? "#16181c" : "#f5f5f0");
+    try {
+      localStorage.setItem("offline_converter_lang", lang);
+      localStorage.setItem("offline_converter_theme", theme);
+    } catch {
+      /* Storage is optional. */
+    }
     updateSeo({
-      title: activeConverter.seoTitle || activeConverter.title,
-      description: activeConverter.seoDescription || activeConverter.description,
-      toolId: activeConverter.id,
+      path: route,
+      title: route === '/upload' ? say('Private file converter — images, PDF, audio & video', 'تبدیل فایل خصوصی؛ عکس، PDF، صدا و ویدئو') : route === '/library' ? say('Your local file library', 'تاریخچه فایل‌های محلی') : route === '/offline' ? say('Offline file converter & install', 'نصب مبدل فایل آفلاین') : say(
+        "Private File Converter — Images, PDF, Audio & Video",
+        "تبدیل فایل خصوصی؛ عکس، PDF، صدا و ویدئو",
+      ),
+      description: route === '/upload' ? say('Choose files, discover compatible output formats, convert and download on your device. Convert images, PDFs, documents, audio and video without uploading their contents.', 'فایل را انتخاب کن، فرمت سازگار را ببین و خروجی را روی دستگاهت بساز و دانلود کن. تبدیل عکس، PDF، سند، صدا و ویدئو بدون ارسال محتوای فایل.') : route === '/library' ? say('Find, download and delete your converted files saved in this browser. Browse the library of image, PDF, document and media tools.', 'فایل‌های تبدیل‌شدهٔ ذخیره‌شده در این مرورگر را جست‌وجو، دانلود و حذف کن. کتابخانهٔ ابزارهای تصویر، PDF، سند و رسانه را ببین.') : route === '/offline' ? say('Install PIMX MORPH and check your saved offline tools. Download the optional media engine for local audio and video conversion without an internet connection.', 'PIMX MORPH را نصب کن و وضعیت ابزارهای ذخیره‌شده را ببین. موتور اختیاری رسانه را برای تبدیل محلی صدا و ویدئو بدون اینترنت دانلود کن.') : say(
+        "Convert images, PDFs, documents, audio and video on your device. Install MORPH and take your downloaded tools offline.",
+        "عکس، PDF، سند، صدا و ویدئو را روی دستگاه خودت تبدیل کن. MORPH را نصب کن و ابزارهای دریافت‌شده را آفلاین همراهت داشته باش.",
+      ),
       lang,
     });
-  }, [activeConverter, lang]);
-
-  if (isAdminView) {
-    return <AdminPanel />;
-  }
-
+    const url = new URL(location.href);
+    url.searchParams.delete('lang');
+    history.replaceState({}, '', route + url.search + url.hash);
+  }, [lang, theme, rtl, route]);
+  if (location.pathname === "/pimxmorphadmin")
+    return (
+      <Suspense fallback={<p className="loading-page">Loading…</p>}>
+        <AdminPanel />
+      </Suspense>
+    );
   return (
-    <div dir={isRtl ? 'rtl' : 'ltr'} className={darkMode ? 'dark min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans' : 'min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans'}>
-      {/* Navigation Header */}
-      <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 py-3.5 px-4 sm:px-6">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <span className="font-extrabold tracking-widest text-lg sm:text-xl text-slate-900 dark:text-slate-100 font-sans uppercase">
-              PIMXMORPH
+    <MotionConfig
+      reducedMotion="user"
+      transition={{ type: "spring", stiffness: 190, damping: 28, mass: 1 }}
+    >
+      <AnimatePresence>
+        {booting && (
+          <SplashLoader
+            key="boot"
+            lang={lang}
+            theme={theme}
+            ready={!preparing}
+            onEntered={() => setEntered(true)}
+            onLanguageChange={setLang}
+            onToggleTheme={() => setTheme(theme === "dark" ? "light" : "dark")}
+          />
+        )}
+      </AnimatePresence>
+      <div
+        className="site-shell"
+        inert={booting || undefined}
+        aria-busy={booting}
+      >
+        <a className="skip-link" href="#main-content">
+          {say("Skip to converter", "رفتن به ابزار تبدیل")}
+        </a>
+        <header className="site-header">
+          <a href="/" className="brand" aria-label="PIMX MORPH home">
+            <span className="brand-symbol">
+              <BrandMark />
             </span>
-          </div>
- 
-          <div className="flex items-center gap-2 font-display">
-            {/* Elegant Language Selector dropdown */}
+            <span>
+              PIMX<span className="brand-morph">MORPH</span>
+            </span>
+          </a>
+          <nav
+            className="main-nav"
+            aria-label={say("Main navigation", "منوی اصلی")}
+          >
+            <a href="/" aria-current={route === '/' ? 'page' : undefined}>{say('Home', 'خانه')}</a>
+            <a href="/upload" aria-current={route === '/upload' ? 'page' : undefined}>{say('Studio', 'استودیو')}</a>
+            <a href="/library" aria-current={route === '/library' ? 'page' : undefined}>{say('Library', 'تاریخچه')}</a>
+            <a href="/offline" aria-current={route === '/offline' ? 'page' : undefined}>{say('Offline', 'آفلاین')}</a>
+          </nav>
+          <div className="header-actions">
             <LanguageDropdown
               currentLang={lang}
-              onLanguageChange={handleLanguageChange}
-              isRtl={isRtl}
+              onLanguageChange={setLang}
+              isRtl={rtl}
             />
- 
-            {/* Theme Toggle Selection */}
             <button
-              onClick={handleToggleTheme}
-              className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-950 transition text-slate-500 dark:text-slate-400 cursor-pointer"
-              title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-              id="theme-toggle"
+              className="icon-button theme-toggle"
+              aria-label={say("Switch color theme", "تغییر حالت روشن و تیره")}
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             >
-              {darkMode ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />}
+              {theme === "dark" ? <Sun size={19} /> : <Moon size={19} />}
             </button>
+            <a className="header-cta" href="/upload">
+              {say("Let’s convert", "شروع کنیم")}
+              <ArrowUpRight size={16} />
+            </a>
           </div>
-        </div>
-      </header>
+        </header>
+        <main id="main-content" className="route-content" data-route={route}>
+          {route === '/' && <HomeHero lang={lang} paused={scenePaused} onPause={() => setScenePaused(!scenePaused)} />}
+          <div hidden={route !== '/upload'}><div className="page-intro upload-intro page-inset"><h1 tabIndex={-1}>{say('A new form starts here.', 'شکل تازه، از اینجا.')}</h1><p>{say('Choose your files. We’ll find the formats that fit.', 'فایل‌هایت را انتخاب کن؛ فرمت‌های سازگار را نشانت می‌دهیم.')}</p></div><Studio lang={lang} onCategoryChange={setCategory} /><RouteSections lang={lang} surface="studio" /></div>
+          {route === '/library' && <Library lang={lang} />}
+          {route === '/' && <>
+          <HomeSections lang={lang} paused={scenePaused} />
 
-      {/* Main Container Workspace Area */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        <LandingHero
-          converters={localizedConverters}
-          selectedType={selectedType}
-          onSelectType={(id) => setSelectedType(id)}
-          lang={lang}
-        />
-
-        <div className="mt-8">
-          <ConverterWidget
-            currentConverter={activeConverter}
-            onProcessedCountChange={handleProcessedCountChange}
-            processedCount={processedCount}
-            onSelectConverter={(id) => setSelectedType(id)}
-            lang={lang}
-          />
-        </div>
-
-        {/* Cloudflare Deploy Instructions & Dynamic FAQ Accordion */}
-        <GuideSection lang={lang} />
-      </main>
-
-      {/* Footer Credentials */}
-      <footer className="mt-20 py-8 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-900 text-center text-xs text-slate-500 font-sans">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="font-semibold text-slate-400">
-            {lang === 'fa' ? '© ۲۰۲۶ PIMXMORPH حریم خصوصی کاملاً حفظ می‌شود و پردازش در مرورگر شما صورت می‌گیرد.' : '© 2026 PIMXMORPH Client Sandbox. Keep your data private.'}
-          </p>
-          <div className="flex gap-4">
-            <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1.5">
-              <ShieldCheck className="w-4.5 h-4.5" /> {t('active_client_tls') || 'Active Client TLS Encryption'}
+          <HomeFAQ lang={lang}/>
+          <HomeFinale lang={lang} paused={scenePaused} />
+          </>}
+          {route === '/offline' && <><div className="page-intro page-inset"><h1 tabIndex={-1}>{say('Take your studio along.', 'استودیو را همراهت ببر.')}</h1><p>{say('Install MORPH. Save the tools you need. Keep creating without a connection.', 'MORPH را نصب کن، ابزارها را ذخیره کن و بدون اینترنت هم تبدیل کن.')}</p></div></>}
+          <div hidden={route !== "/offline"}><InstallPanel lang={lang}/><RouteSections lang={lang} surface="offline" /></div>
+          {!['/', '/upload', '/library', '/offline'].includes(route) && <section className="page-inset page-intro"><h1>{say('Page not found.', 'صفحه پیدا نشد.')}</h1><a className="button button-dark" href="/">{say('Back home', 'بازگشت به خانه')}</a></section>}
+        </main>
+        <footer className="site-footer">
+          <div className="footer-top">
+            <a href="/" className="brand">
+              <span className="brand-symbol">
+                <BrandMark />
+              </span>
+              PIMX MORPH
+            </a>
+            <p>
+              {say(
+                "A better shape for what’s next.",
+                "یک شکل تازه برای قدم بعدی.",
+              )}
+            </p>
+            <a
+              href="https://github.com/MOHAMMADREZAABEDINPOOR/PIMX_MORPH"
+              target="_blank"
+              rel="noreferrer"
+            >
+              GitHub
+              <ArrowUpRight size={16} />
+            </a>
+          </div>
+          <KineticFooter lang={lang}/>
+          <div className="footer-bottom">
+            <span>© {new Date().getFullYear()} PIMX MORPH</span>
+            <span>
+              {say(
+                "Made for files. Built for people.",
+                "برای فایل‌ها ساخته شده. برای آدم‌ها طراحی شده.",
+              )}
             </span>
+            <a href="#">
+              {say("Back to top", "برگشت به بالا")}
+              <ArrowUpRight size={14} />
+            </a>
           </div>
-        </div>
-      </footer>
-    </div>
+        </footer>
+      </div>
+    </MotionConfig>
   );
 }

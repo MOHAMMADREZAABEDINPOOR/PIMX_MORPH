@@ -62,7 +62,7 @@ export async function recordActiveVisit(actionName?: string): Promise<void> {
     try {
       const response = await fetch('https://ipapi.co/json/');
       if (response.ok) {
-        const data = await response.json();
+        const data = await response.json() as { ip?: string; city?: string; country_name?: string };
         geo = {
           ip: data.ip || '127.0.0.1',
           city: data.city || 'Unknown',

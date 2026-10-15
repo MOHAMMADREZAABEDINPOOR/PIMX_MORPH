@@ -6,4 +6,15 @@ coverage/
 *.log
 .env*
 !.env.example
+public/engines/
+public/pdf/
+.taste-skill/
+.impeccable/review/
+.impeccable/questions/
+.impeccable/audit.json
+test-results/
+playwright-report/
+scripts/.prerender-server.mjs
 *.zip
+.wrangler/
+.impeccable/

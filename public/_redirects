@@ -1,4 +1,5 @@
-# Cloudflare Pages SPA fallback — single page app routing
-# All unknown routes resolve to the index, letting React handle the view.
-
-/*    /index.html   200
+# Public routes have prerendered HTML; unknown paths retain a real 404.
+/upload /upload.html 200
+/offline /offline.html 200
+/library /library.html 200
+/pimxmorphadmin /index.html 200

@@ -1,0 +1,7 @@
+{
+  "Vazirmatn-Regular.ttf": {
+    "origin": "https://github.com/rastikerdar/vazirmatn/blob/v33.003/fonts/ttf/Vazirmatn-Regular.ttf",
+    "license": "SIL Open Font License 1.1; see Vazirmatn-OFL.txt"
+  },
+  "uiFonts": "Manrope Variable and Vazirmatn Variable are self-hosted from @fontsource-variable packages; their licenses are included in node_modules."
+}

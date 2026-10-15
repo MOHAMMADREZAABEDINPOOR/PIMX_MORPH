@@ -1,104 +1,190 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Globe, ChevronDown, Check } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
-import { LANG_NAMES, Language } from '../utils/translations';
-
-interface LanguageDropdownProps {
-  currentLang: Language;
-  onLanguageChange: (newLang: Language) => void;
-  isRtl: boolean;
-}
-
-const languageIcons: Record<Language, string> = {
-  en: '🇺🇸',
-  fa: '🇮🇷',
-  ru: '🇷🇺',
-  zh: '🇨🇳',
-  fr: '🇫🇷',
-  it: '🇮🇹',
-  de: '🇩🇪',
-  ar: '🇸🇦',
-  la: '🏛️',
-  el: '🇬🇷',
-};
-
+import { useEffect, useId, useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { Check, ChevronDown, Globe2 } from "lucide-react";
+import { Language, LANG_NAMES } from "../utils/translations";
+const codes = Object.keys(LANG_NAMES) as Language[];
 export default function LanguageDropdown({
   currentLang,
   onLanguageChange,
   isRtl,
-}: LanguageDropdownProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Close dropdown on click outside
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const selectLanguage = (code: Language) => {
-    onLanguageChange(code);
-    setIsOpen(false);
+}: {
+  currentLang: Language;
+  onLanguageChange: (lang: Language) => void;
+  isRtl: boolean;
+}) {
+  const [open, setOpen] = useState(false),
+    [active, setActive] = useState(codes.indexOf(currentLang));
+  const root = useRef<HTMLDivElement>(null),
+    trigger = useRef<HTMLButtonElement>(null),
+    search = useRef(""),
+    timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const id = useId(),
+    reduced = useReducedMotion();
+  const label = (code: Language) => LANG_NAMES[code].split(" (")[0];
+  const select = (index: number) => {
+    onLanguageChange(codes[index]);
+    setOpen(false);
+    trigger.current?.focus();
   };
-
+  useEffect(() => {
+    if (!open) return;
+    const outside = (event: PointerEvent) => {
+      if (!root.current?.contains(event.target as Node)) setOpen(false);
+    };
+    document.addEventListener("pointerdown", outside);
+    return () => document.removeEventListener("pointerdown", outside);
+  }, [open]);
+  useEffect(() => {
+    if (open)
+      document
+        .getElementById(`${id}-${active}`)
+        ?.scrollIntoView({ block: "nearest" });
+  }, [open, active, id]);
+  useEffect(() => () => clearTimeout(timer.current), []);
   return (
-    <div className="relative select-none" ref={dropdownRef} id="custom-language-container">
-      {/* Trigger Button */}
+    <div
+      ref={root}
+      className="language-picker"
+      dir={isRtl ? "rtl" : "ltr"}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+      }}
+    >
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white hover:bg-slate-50 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300 transition duration-200 cursor-pointer shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 active:scale-95"
-        aria-label="Change language"
-        id="language-dropdown-trigger"
+        ref={trigger}
+        className={`language-trigger ${open ? "is-open" : ""}`}
+        type="button"
+        role="combobox"
+        aria-label="Language / زبان"
+        aria-expanded={open}
+        aria-controls={open ? id : undefined}
+        aria-haspopup="listbox"
+        aria-activedescendant={open ? `${id}-${active}` : undefined}
+        onClick={() => {
+          setActive(codes.indexOf(currentLang));
+          setOpen(!open);
+        }}
+        onKeyDown={(event) => {
+          if (
+            [
+              "ArrowDown",
+              "ArrowUp",
+              "Home",
+              "End",
+              "Enter",
+              " ",
+              "Escape",
+            ].includes(event.key)
+          )
+            event.preventDefault();
+          if (event.key === "Escape") {
+            setOpen(false);
+            return;
+          }
+          if (event.key === "Tab") {
+            setOpen(false);
+            return;
+          }
+          if (event.key === "Enter" || event.key === " ") {
+            if (open) select(active);
+            else {
+              setActive(codes.indexOf(currentLang));
+              setOpen(true);
+            }
+            return;
+          }
+          if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+            if (!open) {
+              setActive(codes.indexOf(currentLang));
+              setOpen(true);
+            } else
+              setActive(
+                (index) =>
+                  (index +
+                    (event.key === "ArrowDown" ? 1 : -1) +
+                    codes.length) %
+                  codes.length,
+              );
+            return;
+          }
+          if (event.key === "Home") {
+            setOpen(true);
+            setActive(0);
+            return;
+          }
+          if (event.key === "End") {
+            setOpen(true);
+            setActive(codes.length - 1);
+            return;
+          }
+          if (event.key.length === 1 && !event.ctrlKey && !event.metaKey) {
+            search.current += event.key.toLocaleLowerCase();
+            clearTimeout(timer.current);
+            timer.current = setTimeout(() => {
+              search.current = "";
+            }, 650);
+            const match = codes.findIndex((code) =>
+              label(code).toLocaleLowerCase().startsWith(search.current),
+            );
+            if (match >= 0) {
+              setOpen(true);
+              setActive(match);
+            }
+          }
+        }}
       >
-        <Globe className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-        <span className="hidden sm:inline-block">{languageIcons[currentLang]}</span>
-        <span className="font-semibold">{LANG_NAMES[currentLang]}</span>
-        <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+        <Globe2 size={16} />
+        <span className="language-name">{label(currentLang)}</span>
+        <span className="language-short" aria-hidden="true">
+          {currentLang.toUpperCase()}
+        </span>
+        <ChevronDown size={13} className="language-chevron" />
       </button>
-
-      {/* Popover Menu item options */}
       <AnimatePresence>
-        {isOpen && (
+        {open && (
           <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            id={id}
+            role="listbox"
+            aria-label="Language / زبان"
+            className="language-menu"
+            initial={{
+              opacity: 0,
+              y: reduced ? 0 : 7,
+              scale: reduced ? 1 : 0.98,
+            }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            transition={{ duration: 0.15, ease: 'easeOut' }}
-            style={{ zIndex: 9998 }}
-            className={`absolute ${
-              isRtl ? 'left-0 origin-top-left' : 'right-0 origin-top-right'
-            } mt-2 w-56 max-h-72 sm:max-h-80 overflow-y-auto rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-1.5 shadow-xl shadow-slate-100/40 dark:shadow-slate-950/50 backdrop-blur-xl`}
+            exit={{ opacity: 0, y: reduced ? 0 : 3 }}
+            transition={{
+              duration: reduced ? 0 : 0.24,
+              ease: [0.16, 1, 0.3, 1],
+            }}
           >
-            <div className="px-2.5 py-1.5 text-[10px] font-bold tracking-wider text-slate-400 dark:text-slate-500 uppercase border-b border-slate-100 dark:border-slate-800/60 mb-1">
-              Select Language / انتخاب زبان
-            </div>
-            <div className="space-y-0.5">
-              {(Object.keys(LANG_NAMES) as Language[]).map((code) => {
-                const isSelected = currentLang === code;
-                return (
-                  <button
-                    key={code}
-                    onClick={() => selectLanguage(code)}
-                    className={`flex items-center justify-between w-full px-2.5 py-2 text-xs rounded-lg transition-all duration-150 cursor-pointer ${
-                      isSelected
-                        ? 'bg-blue-500 text-white font-bold'
-                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100/70 dark:hover:bg-slate-800/80 font-semibold'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="text-base select-none">{languageIcons[code]}</span>
-                      <span>{LANG_NAMES[code]}</span>
-                    </div>
-                    {isSelected && <Check className="w-4 h-4 text-white font-bold" />}
-                  </button>
-                );
-              })}
-            </div>
+            {codes.map((code, index) => (
+              <div
+                key={code}
+                id={`${id}-${index}`}
+                role="option"
+                aria-selected={currentLang === code}
+                className={`language-option ${active === index ? "is-active" : ""} ${currentLang === code ? "is-selected" : ""}`}
+                onPointerMove={() => setActive(index)}
+                onPointerDown={(event) => event.preventDefault()}
+                onClick={() => select(index)}
+              >
+                <span
+                  lang={code}
+                  dir={code === "fa" || code === "ar" ? "rtl" : "ltr"}
+                >
+                  {label(code)}
+                </span>
+                <span className="language-code">
+                  {currentLang === code ? (
+                    <Check size={16} />
+                  ) : (
+                    code.toUpperCase()
+                  )}
+                </span>
+              </div>
+            ))}
           </motion.div>
         )}
       </AnimatePresence>

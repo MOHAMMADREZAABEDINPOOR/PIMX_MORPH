@@ -14,6 +14,7 @@ export interface SeoInput {
   toolId?: string;
   /** Active UI language code, used for hreflang + og:locale. */
   lang?: string;
+  path?: string;
 }
 
 const SITE_URL = 'https://pimxmorph.pages.dev';
@@ -60,12 +61,8 @@ function setJsonLd(id: string, data: unknown): void {
 }
 
 /** Build the canonical URL for a given tool + language. */
-function buildUrl(toolId?: string, lang?: string): string {
-  const params = new URLSearchParams();
-  if (toolId && toolId !== 'universal') params.set('tool', toolId);
-  if (lang && lang !== 'en') params.set('lang', lang);
-  const qs = params.toString();
-  return qs ? `${SITE_URL}/?${qs}` : `${SITE_URL}/`;
+function buildUrl(toolId?: string, lang?: string, path = '/'): string {
+  return `${SITE_URL}${path}`;
 }
 
 const LOCALE_MAP: Record<string, string> = {
@@ -82,15 +79,16 @@ const LOCALE_MAP: Record<string, string> = {
 };
 
 /** Map of hreflang codes used in the <link rel="alternate"> block. */
-const HREFLANGS = ['en', 'fa', 'ru', 'zh', 'fr', 'it', 'de', 'ar'];
+const HREFLANGS = ['en', 'fa'];
 
 /**
  * Update every SEO-relevant tag for the current view.
  * Called from App.tsx whenever the active converter or language changes.
  */
-export function updateSeo({ title, description, toolId, lang = 'en' }: SeoInput): void {
-  const fullTitle = title.includes('PIMXMORPH') ? title : `${title} | PIMXMORPH`;
-  const canonicalUrl = buildUrl(toolId, lang);
+export function updateSeo({ title, description, toolId, lang = 'en', path = '/' }: SeoInput): void {
+  const fullTitle = title.includes('PIMX') ? title : `${title} | PIMX MORPH`;
+  const canonicalUrl = buildUrl(toolId, lang, path);
+  setMeta('name', 'robots', path === '/library' || !['/', '/upload', '/offline'].includes(path) ? 'noindex, follow' : 'index, follow, max-image-preview:large');
 
   // --- Primary ---
   document.title = fullTitle;
@@ -99,19 +97,22 @@ export function updateSeo({ title, description, toolId, lang = 'en' }: SeoInput)
 
   // --- Canonical & alternates ---
   setLink('canonical', canonicalUrl);
-  HREFLANGS.forEach((code) => {
-    setLink('alternate', buildUrl(toolId, code), code);
-  });
-  setLink('alternate', SITE_URL, 'x-default');
+  // Language is a browser preference; each page has one public URL.
+  document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(el => el.remove());
 
   // --- Open Graph ---
   setMeta('property', 'og:title', fullTitle);
   setMeta('property', 'og:description', description);
   setMeta('property', 'og:url', canonicalUrl);
   setMeta('property', 'og:image', DEFAULT_OG_IMAGE);
+  setMeta('property', 'og:image:width', '1200');
+  setMeta('property', 'og:image:height', '630');
+  setMeta('property', 'og:image:alt', 'PIMX MORPH — private local file conversion');
   setMeta('property', 'og:locale', LOCALE_MAP[lang] || 'en_US');
-  const alternates = HREFLANGS.filter((c) => c !== lang).map((c) => LOCALE_MAP[c]);
-  setMeta('property', 'og:locale:alternate', alternates.join(', '));
+  document.querySelectorAll('meta[property="og:locale:alternate"]').forEach(el => el.remove());
+  HREFLANGS.filter(code => code !== lang).forEach(code => {
+    const meta = document.createElement('meta'); meta.setAttribute('property', 'og:locale:alternate'); meta.content = LOCALE_MAP[code]; document.head.appendChild(meta);
+  });
 
   // --- Twitter ---
   setMeta('name', 'twitter:card', 'summary_large_image');
@@ -120,6 +121,7 @@ export function updateSeo({ title, description, toolId, lang = 'en' }: SeoInput)
   setMeta('name', 'twitter:image', DEFAULT_OG_IMAGE);
 
   // --- Per-tool JSON-LD (rich result) ---
+  document.querySelectorAll('script[type="application/ld+json"]:not([data-seo])').forEach(el => el.remove());
   setJsonLd('webapp-tool', {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
@@ -132,4 +134,5 @@ export function updateSeo({ title, description, toolId, lang = 'en' }: SeoInput)
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
     publisher: { '@type': 'Organization', name: 'PIMXMORPH', url: SITE_URL },
   });
+  setJsonLd('breadcrumb', { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'PIMX MORPH', item: buildUrl(undefined, lang) }, ...(path === '/' ? [] : [{ '@type': 'ListItem', position: 2, name: title, item: canonicalUrl }])] });
 }
