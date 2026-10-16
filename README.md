@@ -1,166 +1,61 @@
 <div align="center">
 
-<img src="assets/readme/hero.gif" width="1200" alt="PIMX MORPH: file formats moving through a transformation ring" />
+<a href="https://pimxmorph.pages.dev/"><img src="assets/readme/hero.gif" width="1200" alt="PIMX MORPH: animated project artwork" /></a>
 
-**[English](README.md) · [فارسی](README.fa.md)**
+[English](README.md) · [فارسی](README.fa.md) · [Live website ↗](https://pimxmorph.pages.dev/)
+
+[![Live GitHub statistics](https://raw.githubusercontent.com/MOHAMMADREZAABEDINPOOR/MOHAMMADREZAABEDINPOOR/main/assets/readme/live-PIMX_MORPH.svg)](https://github.com/MOHAMMADREZAABEDINPOOR/PIMX_MORPH)
 
 </div>
 
-# 🔄 PIMX MORPH
+# PIMX MORPH
 
-<!-- pimx-live-site:start -->
-## Live website
+Convert images, PDFs, documents, audio, video and structured data locally. Upload first to see compatible outputs, save finished conversions in a browser library, and install the app with downloaded tools available offline.
 
-**[Open PIMX_MORPH ↗](https://pimxmorph.pages.dev/)**
-<!-- pimx-live-site:end -->
+<a href="https://pimxmorph.pages.dev/"><img src="assets/readme/redesign.gif" width="1200" alt="Preview of the redesigned interface: PIMX MORPH" /></a>
 
-A browser conversion workbench for images, PDFs, documents, audio and structured data. Separate converter functions handle each supported transformation.
+[Preview of the redesigned interface · PNG](assets/readme/redesign.png) · [Static artwork](assets/readme/hero.png)
 
-[GitHub](https://github.com/MOHAMMADREZAABEDINPOOR/PIMX_MORPH) · [PIMX / Profile](https://github.com/MOHAMMADREZAABEDINPOOR) · [Static artwork](assets/readme/hero.png)
+## What you can do
 
-| At a glance | Details |
-|:---|:---|
-| 🔄 Experience | Web application / browser experience |
-| 🧰 Built with | `React` · `Vite` · `TypeScript` · `Express` |
-| 🌐 Documentation | [English](README.md) · [فارسی](README.fa.md) |
+- Upload-first workflow with compatible output formats
+- Local image/HEIC, PDF, DOCX, media and JSON/CSV tools
+- Persistent output library, installable PWA and downloadable offline media engine
 
-[✨ Features](#features) · [🚀 Getting started](#getting-started) · [⚙️ Configuration](#configuration) · [🌍 Deployment](#deployment)
+## Upload, convert, keep
 
----
+Start at `/`, open `/upload` and select files. MORPH then shows compatible output formats. Download finished conversions or return to them in `/library`; outputs are stored locally and can be downloaded again or deleted. `/offline` reports which tools are actually saved on the device.
 
-<a id="features"></a>
+The folded-M identity, animated 3D artwork, Persian/English interface and light/dark themes accompany the same local conversion engines. Files are processed on your device without uploading their contents. No account or AI API key is needed for conversion.
 
-## ✨ Features
+## Formats and limits
 
-| Area | Included capability |
-|:---|:---|
-| 🎨 Visuals | Image format conversion, HEIC handling and image-to-PDF |
-| ⚡ Workflow | PDF merge, split, rendering and text extraction |
-| 📁 Files | JSON/CSV conversion and document text tools |
-| 🌐 Experience | Localized workspace, themes and optional visit tracking |
+Image and HEIC tools, PDF merge/split/rendering, document text workflows, audio/video conversion and JSON/CSV each have their own supported inputs and outputs. PDF-to-Word reconstructs available text and can lose layout. Scanned text needs a separate OCR tool. Browser memory and the bundled codecs limit media conversions.
 
-<a id="stack"></a>
+## Install and use offline
 
-## 🧰 Stack
+Open the production app online and wait for the offline kit to report readiness. Save the larger media tools separately before disconnecting. Cached tools and saved conversion outputs use separate browser storage. Clearing site data can remove both; keep important downloads outside the browser. Installation depends on browser support.
 
-| Tool | Version / source |
-|---|---|
-| React | `^19.0.1` |
-| Vite | `^6.2.3` |
-| TypeScript | `~5.8.2` |
-| Express | `^4.21.2` |
-| Motion | `^12.23.24` |
-| Tailwind CSS | `^4.1.14` |
+Read [OFFLINE.md](OFFLINE.md) for caching, installation, engine licensing and update behavior.
 
-<a id="getting-started"></a>
+## Run locally
 
-## 🚀 Getting started
+Use Node.js 22.12 or newer.
 
-Node.js 22.12+ and the package manager declared in package.json. Install dependencies from the checked-in lockfile where available.
-
-```bash
-git clone https://github.com/MOHAMMADREZAABEDINPOOR/PIMX_MORPH.git
-cd PIMX_MORPH
-
+```sh
 npm ci
 npm run dev
 ```
 
-<a id="configuration"></a>
-
-## ⚙️ Configuration
-
-These names are found in the example configuration or source; not all are required. Check their defaults/usage in those files and supply secrets only in your local or hosting environment.
-
-| Name | Role |
-|---|---|
-| `APP_URL` | Application setting; inspect its definition |
-| `GEMINI_API_KEY` | Credential/connection setting; keep private |
-
-Hosting bindings: `PIMX_VISITS`.
-
-<a id="usage"></a>
-
-## 🎯 Usage
-
-Choose a converter card, select a matching file and download the output. Use merge/split controls for PDFs and the JSON/CSV tools for structured data.
-
-<a id="project-structure"></a>
-
-## 🗂️ Project structure
-
-| Path | Role |
-|---|---|
-| [`assets/`](assets/) | Brand/media/README assets |
-| [`functions/`](functions/) | Hosting API functions |
-| [`public/`](public/) | Public web assets |
-| [`src/`](src/) | Application source |
-| [`index.html`](index.html) | Project entry/configuration file |
-| [`metadata.json`](metadata.json) | Project entry/configuration file |
-| [`package.json`](package.json) | Project entry/configuration file |
-| [`tsconfig.json`](tsconfig.json) | Project entry/configuration file |
-| [`wrangler.toml`](wrangler.toml) | Project entry/configuration file |
-
-<a id="commands-and-checks"></a>
-
-## 🧪 Commands and checks
-
 | Command | Purpose |
-|:---|:---|
-| `npm run dev` | 🧑‍💻 Development server |
-| `npm run build` | 📦 Production build |
-| `npm run preview` | 👀 Preview a build |
-| `npm run lint` | 🧹 Lint source |
+| --- | --- |
+| `npm run lint` | TypeScript checks |
+| `npm run build` | Prepare local engines, build and prerender routes |
+| `npm run preview` | Preview the production PWA |
+| `npm run test:e2e` | Browser, format and offline conversion checks |
 
-```bash
-npm run dev
-npm run build
-npm run preview
-npm run lint
-```
+Deploy the generated `dist` directory to a static HTTPS host, preserving `_headers` and `_redirects` for Cloudflare Pages. Converter engines are prepared from npm dependencies by `predev` and `prebuild`. Optional visit tracking in `functions/` is separate from file processing.
 
-These commands are declared in package.json; the list is not a test execution report. Test commands may need a browser, service or prepared database.
+See [converter source](src/), [asset/build scripts](scripts/) and [offline guide](OFFLINE.md).
 
-<a id="deployment"></a>
-
-## 🌍 Deployment
-
-Deploy the build according to its architecture: server-backed projects need a Node process; static Vite frontends can host dist. Pages functions, KV or D1 require separate configuration.
-
-<a id="limitations"></a>
-
-## 📌 Limitations
-
-PDF-to-Word reconstructs available content and may lose layout; scanned documents need OCR that this snapshot does not guarantee. Large files and browser codec support constrain conversions.
-
-<a id="troubleshooting"></a>
-
-## 🛠️ Troubleshooting
-
-- Missing packages: install dependencies using the project’s package manager.
-- API/network failure: check the configured origin, provider and hosting bindings.
-- Old assets: rebuild when a build script exists, then clear the browser cache.
-
-<a id="contributing"></a>
-
-## 🤝 Contributing
-
-Create a focused branch, verify the affected behavior and explain the change clearly. Keep private data, build outputs and local databases out of commits.
-
-<a id="license"></a>
-
-## 📄 License
-
-No repository-level license file is included in this snapshot. Public visibility alone does not grant reuse rights; contact the repository owner for terms.
-
----
-
-Part of **PIMX** · Documentation in English and Persian.
-
----
-
-<div align="center">
-
-🔄 **PIMX MORPH** · [English](README.md) · [فارسی](README.fa.md)
-
-</div>
+[GitHub](https://github.com/MOHAMMADREZAABEDINPOOR/PIMX_MORPH) · [PIMX](https://github.com/MOHAMMADREZAABEDINPOOR) · [Portfolio](https://pimx.pages.dev/)
