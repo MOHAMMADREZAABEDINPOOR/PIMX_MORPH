@@ -1,6 +1,6 @@
 <div align="center">
 
-<a href="https://pimxmorph.pages.dev/"><img src="assets/readme/hero.gif" width="1200" alt="PIMX MORPH: animated project artwork" /></a>
+<a href="https://pimxmorph.pages.dev/"><img src="assets/readme/hero.gif" width="1200" alt="PIMX MORPH: original animated 3D illustration" /></a>
 
 [English](README.md) · [فارسی](README.fa.md) · [Live website ↗](https://pimxmorph.pages.dev/)
 
@@ -11,10 +11,6 @@
 # PIMX MORPH
 
 Convert images, PDFs, documents, audio, video and structured data locally. Upload first to see compatible outputs, save finished conversions in a browser library, and install the app with downloaded tools available offline.
-
-<a href="https://pimxmorph.pages.dev/"><img src="assets/readme/redesign.gif" width="1200" alt="Preview of the redesigned interface: PIMX MORPH" /></a>
-
-[Preview of the redesigned interface · PNG](assets/readme/redesign.png) · [Static artwork](assets/readme/hero.png)
 
 ## What you can do
 

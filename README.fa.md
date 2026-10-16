@@ -1,6 +1,6 @@
 <div align="center">
 
-<a href="https://pimxmorph.pages.dev/"><img src="assets/readme/hero.gif" width="1200" alt="PIMX MORPH: animated project artwork" /></a>
+<a href="https://pimxmorph.pages.dev/"><img src="assets/readme/hero.gif" width="1200" alt="PIMX MORPH: original animated 3D illustration" /></a>
 
 [English](README.md) · [فارسی](README.fa.md) · [Live website ↗](https://pimxmorph.pages.dev/)
 
@@ -11,10 +11,6 @@
 # PIMX MORPH
 
 تصویر، PDF، سند، صدا، ویدئو و داده‌های ساختاریافته را روی دستگاه خودت تبدیل کن. ابتدا فایل را انتخاب کن تا خروجی‌های سازگار نمایش داده شوند؛ نتیجه‌ها را در کتابخانهٔ مرورگر نگه دار و برنامه را با ابزارهای دانلودشده آفلاین استفاده کن.
-
-<a href="https://pimxmorph.pages.dev/"><img src="assets/readme/redesign.gif" width="1200" alt="پیش‌نمایش رابط بازطراحی‌شده: PIMX MORPH" /></a>
-
-[پیش‌نمایش رابط بازطراحی‌شده · PNG](assets/readme/redesign.png) · [Static artwork](assets/readme/hero.png)
 
 ## امکانات
 
